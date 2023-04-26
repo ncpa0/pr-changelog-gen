@@ -53,7 +53,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ncpa0cpl/pr-changelog-gen.git"
+    "url": "https://github.com/ncpa0/pr-changelog-gen.git"
   },
   "keywords": [
     "pr-log",
