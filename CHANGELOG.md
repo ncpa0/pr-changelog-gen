@@ -1,3 +1,30 @@
+## 1.1.0 (May 2, 2023)
+
+### Features
+
+- #### feat: added four new options to the config/cli ([#23](https://github.com/ncpa0/pr-changelog-gen/pull/23))
+
+  Four new config options/cli arguments have been added:
+
+  - `--exclude-prs`/`excludePrs` - allows to define a list of pull requests IDs that should be excluded from the changelog
+  - `--exclude-pattern`/`excludePatterns` - allows to define regex patterns that will matched against the pull requests title,matched prs will be excluded from the changelog
+  - `--no-output`/`noOutput` - when enabled generated changelog will not be written to any file or printed to stdout, this option is specifically intended for when the `pr-changelog-gen` is used from a node script
+  - `--output-to-stdout`/`outputToStdout` - when enabled, instead of writing the changelog to a file, it will be printed into the console standard output
+
+  Additionally the Main Action that's exported from the package now returns the generated changelog as a simple `string`.
+
+### Bug Fixes
+
+- #### fix: removed a vulnerable dependency (git-promise) ([#22](https://github.com/ncpa0/pr-changelog-gen/pull/22))
+
+  Removed `git-promise` dependency which has a security vulnerability, and replaced it with a node's child_process.spawn function.
+
+  See https://github.com/ncpa0/pr-changelog-gen/security/dependabot/1 for more details on the vulnerability.
+
+- #### fix: security issue in the \_stripTrailingEmptyLine method ([#20](https://github.com/ncpa0/pr-changelog-gen/pull/20))
+
+  Fixed the security issue detected in the https://github.com/ncpa0/pr-changelog-gen/security/code-scanning/1
+
 ## 1.0.0 (April 25, 2023)
 
 ### Features
