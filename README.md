@@ -20,16 +20,21 @@
   - [Changelog formatting](#changelog-formatting)
     - [Custom date format](#custom-date-format)
 - [Usage](#usage)
+  - [Configuration](#configuration)
   - [Options](#options)
     - [-v --target-version](#-v---target-version)
     - [-n --include-pr-description](#-n---include-pr-description)
     - [-p --pr-title-matcher](#-p---pr-title-matcher)
+    - [-e --exclude-prs](#-e---exclude-prs)
+    - [-x --exclude-pattern](#-x---exclude-pattern)
     - [-d --date-format](#-d---date-format)
     - [-l --valid-labels](#-l---valid-labels)
     - [-o --output-file](#-o---output-file)
     - [-c --only-since](#-c---only-since)
     - [-gl --group-by-labels](#-gl---group-by-labels)
     - [-gm --group-by-matchers](#-gm---group-by-matchers)
+    - [-q --no-output](#-q---no-output)
+    - [-u --output-to-stdout](#-u---output-to-stdout)
     - [-s --sloppy](#-s---sloppy)
     - [-t --trace](#-t---trace)
 - [Correct usage makes a clean and complete changelog](#correct-usage-makes-a-clean-and-complete-changelog)
@@ -146,6 +151,80 @@ To create or update your changelog run
 
 `pr-changelog-gen -v <version-number> [options]` where `version-number` is the name of this release
 
+### Configuration
+
+Configuration can de defined in the `package.json` file of your project. The following config options are supported:
+
+- `sloppy` (boolean)
+- `dateFormat` (string)
+- `validLabels` (array of strings)
+- `prTitleMatcher` (array of regexps)
+- `includePrBody` (boolean)
+- `outputFile` (string)
+- `onlySince` (string)
+- `groupByLabels` (boolean)
+- `groupByMatchers` (boolean)
+- `outputToStdout` (boolean)
+- `noOutput` (boolean)
+- `excludePrs` (array of numbers)
+- `excludePatterns` (array of regexps)
+
+Each of the above options has a corresponding command line argument. The command line option will always override the value defined in the `package.json`.
+
+For an explanation of each of these options, see the options section below.
+
+##### prTitleMatcher
+
+The `prTitleMatcher` option can de defined in a few different ways:
+
+- as a single regexp string
+  ```json
+  {
+    "pr-changelog-gen": {
+      "prTitleMatcher": "^(feat|fix):"
+    }
+  }
+  ```
+- as an array of regexp strings
+  ```json
+  {
+    "pr-changelog-gen": {
+      "prTitleMatcher": ["^feat:", "^fix:"]
+    }
+  }
+  ```
+- an object with optional label and regexp flags
+  ```json
+  {
+    "pr-changelog-gen": {
+      "prTitleMatcher": {
+        "label": "Features",
+        "regexp": "^feat:",
+        "flags": "iu"
+      }
+    }
+  }
+  ```
+- an array of objects with optional label and regexp flags
+  ```json
+  {
+    "pr-changelog-gen": {
+      "prTitleMatcher": [
+        {
+          "label": "Features",
+          "regexp": "^feat:",
+          "flags": "iu"
+        },
+        {
+          "label": "Bugd",
+          "regexp": "^fix:",
+          "flags": "iu"
+        }
+      ]
+    }
+  }
+  ```
+
 ### Options
 
 #### -v --target-version
@@ -163,6 +242,14 @@ When enabled this option includes the PR description in the changelog along the 
 #### -p --pr-title-matcher
 
 This option can defined a Regular Expression that will be used to determine which PRs are to be included in the changelog. This argument can only define a single Regular Expression. If you need to define multiple Regular Expressions or add flags or labels to it you should use the `pr-changelog-gen.prTitleMatcher` section of your `package.json` instead.
+
+#### -e --exclude-prs
+
+A list of PR numbers to exclude from the changelog.
+
+#### -x --exclude-pattern
+
+A regex pattern that will be used to determine if a Pull Request should be excluded from the changelog.
 
 #### -d --date-format
 
@@ -199,6 +286,14 @@ When enabled this option will group PRs in the changelog by their labels. If a P
 ##### Default: `true`
 
 When enabled this option will group PRs in the changelog by their title matchers. If a PR has multiple title matchers the matcher specified first in the `pr-changelog-gen.prTitleMatcher` section of your `package.json` will be used. If a matcher has no label, it will be grouped under the `Other` section.
+
+#### -q --no-output
+
+When enabled generated changelog will not be written to any file or printed to stdout, this option is specifically intended for when the `pr-changelog-gen` is used from a node script.
+
+#### -u --output-to-stdout
+
+When enabled, instead of writing the changelog to a file, it will be printed into the console standard output.
 
 #### -s --sloppy
 
