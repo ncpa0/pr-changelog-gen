@@ -1,3 +1,13 @@
+## 1.1.1 (May 29, 2023)
+
+### Bug Fixes
+
+- #### fix: the order when fetching PR from github was incorrect ([#45](https://github.com/ncpa0/pr-changelog-gen/pull/45))
+
+  When fetching PRs from GutHub, the default order is ascending, so the results received were from the oldest to the latest. Since we only fetch 100 PRs, if a repository had more than 100 old closed PRs the newer PRs would not be included in the generated Changelog. This was fixed so that the order is now from the latest to oldest.
+  
+  Additionally, from now on if no PRs are found to be eligible for generating a changelog, a warning will be printed and the program will exit without making any changes. 
+
 ## 1.1.0 (May 2, 2023)
 
 ### Features
