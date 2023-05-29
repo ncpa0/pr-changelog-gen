@@ -3,6 +3,7 @@ import semver from "semver";
 import { ConfigFacade } from "../modules/config";
 import { Filesystem } from "../modules/filesystem";
 import { GithubUrlResolver } from "../modules/github-url-resolver";
+import { Logger } from "../modules/logger";
 import type { PackageJson, PullRequest, SemverNumber } from "../shared-types";
 import { Inject } from "../utils/dependency-injector/inject";
 import { Service } from "../utils/dependency-injector/service";
@@ -29,6 +30,9 @@ export class CliService extends Service {
 
   @Inject(() => GitService)
   private declare gitService: GitService;
+
+  @Inject(() => Logger)
+  private declare log: Logger;
 
   _stripTrailingEmptyLine(text: string) {
     if (text.endsWith("\n\n")) {
@@ -79,13 +83,18 @@ export class CliService extends Service {
     }
 
     const pullRequests = this._filterPrs(await this.pr.getMerged(githubRepo));
+
+    if (pullRequests.length === 0) {
+      return { created: false, changelog: "" };
+    }
+
     const changelog = await this.changelog.create(
       newVersionNumber,
       pullRequests,
       githubRepo
     );
 
-    return this._stripTrailingEmptyLine(changelog);
+    return { created: true, changelog: this._stripTrailingEmptyLine(changelog) };
   }
 
   async run(newVersionNumber: SemverNumber, packageInfo: PackageJson) {
@@ -97,7 +106,15 @@ export class CliService extends Service {
 
     this._validateVersionNumber(newVersionNumber);
 
-    const changelog = await this._generateChangelog(githubRepo, newVersionNumber);
+    const { changelog, created } = await this._generateChangelog(
+      githubRepo,
+      newVersionNumber
+    );
+
+    if (!created) {
+      this.log.warn("No valid pull requests found.");
+      return "";
+    }
 
     const changelogPath = this._getOutputPath();
 
@@ -106,7 +123,7 @@ export class CliService extends Service {
     }
 
     if (this.config.get("outputToStdout", false)) {
-      process.stdout.write(changelog);
+      this.log.write(changelog, { preformatted: true });
     } else {
       await this.filesystem.prepend(changelogPath, changelog);
     }
