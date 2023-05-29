@@ -1,12 +1,14 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import { ConfigFacade } from "../../src/modules/config";
 import { Filesystem } from "../../src/modules/filesystem";
+import { Logger } from "../../src/modules/logger";
 import { ChangelogGeneratorService } from "../../src/services/changelog-generator";
 import { CliService } from "../../src/services/cli";
 import { GitService } from "../../src/services/git";
 import { PullRequestResolverService } from "../../src/services/pull-request-resolver";
 import { Repo } from "../../src/utils/repo";
-import { mockConfig } from "../shared";
+import type { LoggerMockParams } from "../shared";
+import { LoggerMock, mockConfig } from "../shared";
 import type { PullRequest, SemverNumber } from "../shared-types";
 
 export type CliFactoryParams = {
@@ -19,21 +21,27 @@ export type CliFactoryParams = {
   ) => Promise<string>;
   prependFile: (filePath: string, content: string) => Promise<void>;
   config: ConfigFacade;
-};
+} & LoggerMockParams;
 
-function createCli(dependencies: Partial<CliFactoryParams> = {}) {
-  dependencies.ensureCleanLocalGitState ??= jest.fn(async () => {});
-  dependencies.prependFile ??= jest.fn(async () => {});
-  dependencies.getMergedPullRequests ??= jest.fn(async () => []);
-  dependencies.createChangelog ??= jest.fn(async () => "");
-  dependencies.config ??= mockConfig();
+function createCli(params: Partial<CliFactoryParams> = {}) {
+  params.ensureCleanLocalGitState ??= jest.fn(async () => {});
+  params.prependFile ??= jest.fn(async () => {});
+  params.createChangelog ??= jest.fn(async () => "");
+  params.config ??= mockConfig();
+
+  params.getMergedPullRequests ??= jest.fn(async () => [
+    { id: 1, title: "", mergedAt: new Date() } satisfies PullRequest,
+  ]);
+
+  const loggerMock = new LoggerMock(params);
 
   return CliService.init(
-    [ConfigFacade, dependencies.config],
-    [ChangelogGeneratorService, { create: dependencies.createChangelog }],
-    [PullRequestResolverService, { getMerged: dependencies.getMergedPullRequests }],
-    [Filesystem, { prepend: dependencies.prependFile }],
-    [GitService, { ensureCleanLocalGitState: dependencies.ensureCleanLocalGitState }]
+    [ConfigFacade, params.config],
+    [ChangelogGeneratorService, { create: params.createChangelog }],
+    [PullRequestResolverService, { getMerged: params.getMergedPullRequests }],
+    [Filesystem, { prepend: params.prependFile }],
+    [GitService, { ensureCleanLocalGitState: params.ensureCleanLocalGitState }],
+    [Logger, loggerMock]
   );
 }
 
@@ -90,9 +98,11 @@ describe("CliService", () => {
 
   it("reports the generated changelog", async () => {
     const createChangelog = jest.fn(async () => "generated changelog");
-    const getMergedPullRequests = jest.fn(async () => []);
     const ensureCleanLocalGitState = jest.fn(async () => {});
     const prependFile = jest.fn(async () => {});
+    const getMergedPullRequests = jest.fn(async () => [
+      { id: 1, title: "", mergedAt: new Date() } satisfies PullRequest,
+    ]);
 
     const cli = createCli({
       createChangelog,
@@ -112,7 +122,11 @@ describe("CliService", () => {
     expect(getMergedPullRequests).toHaveBeenCalledWith(expectedGithubRepo);
 
     expect(createChangelog).toHaveBeenCalledTimes(1);
-    expect(createChangelog).toHaveBeenCalledWith("1.0.0", [], expectedGithubRepo);
+    expect(createChangelog).toHaveBeenCalledWith(
+      "1.0.0",
+      expect.any(Array),
+      expectedGithubRepo
+    );
 
     expect(prependFile).toHaveBeenCalledTimes(1);
     expect(prependFile).toHaveBeenCalledWith("/foo/CHANGELOG.md", "generated changelog");
@@ -133,5 +147,35 @@ describe("CliService", () => {
       "/foo/CHANGELOG.md",
       "generated\nchangelog\nwith\n\na\nlot\n\nof\nempty\nlines\n"
     );
+  });
+
+  it("prints the generated changelog when `outputToStdout` is enabled", async () => {
+    const onStdoutWrite = jest.fn((v: string) => {});
+
+    const cli = createCli({
+      config: mockConfig({ outputToStdout: true }),
+      logWrite: onStdoutWrite,
+      createChangelog: async () => "generated changelog",
+    });
+
+    await cli.run("1.0.0", packageInfo);
+
+    expect(onStdoutWrite).toHaveBeenCalledTimes(1);
+    expect(onStdoutWrite).toHaveBeenCalledWith("generated changelog");
+  });
+
+  it("prints a warning when no pull requests were found", async () => {
+    const onWarn = jest.fn((v: string) => {});
+
+    const cli = createCli({
+      config: mockConfig({ outputToStdout: true }),
+      logWarn: onWarn,
+      getMergedPullRequests: async () => [],
+    });
+
+    await cli.run("1.0.0", packageInfo);
+
+    expect(onWarn).toHaveBeenCalledTimes(1);
+    expect(onWarn).toHaveBeenCalledWith("No valid pull requests found.");
   });
 });

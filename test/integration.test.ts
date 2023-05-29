@@ -32,8 +32,11 @@ import { DateResolver } from "../src/modules/date-resolver";
 import { EnvvarReader } from "../src/modules/envvar-reader";
 import { Filesystem } from "../src/modules/filesystem";
 import { Git } from "../src/modules/git-client";
+import { Logger } from "../src/modules/logger";
 import type { Constructor } from "../src/utils/dependency-injector/inject";
 import type { Dependencies } from "../src/utils/dependency-injector/service";
+import type { LoggerMockParams } from "./shared";
+import { LoggerMock } from "./shared";
 
 const mockRepoUrl = "https://github.com/repoOwner/repoName.git";
 
@@ -221,7 +224,7 @@ const factory = (
     filesystem?: any;
     config?: Partial<Config>;
     envvars?: Record<string, any>;
-  } = {}
+  } & LoggerMockParams = {}
 ) => {
   const {
     argMocks,
@@ -247,6 +250,8 @@ const factory = (
     get: (key: string) => envvars[key],
   };
 
+  const logger = new LoggerMock(params);
+
   return MainAction.init(
     [ConfigLoader, configLoaderMock],
     [EnvvarReader, envvarReaderMock],
@@ -254,14 +259,13 @@ const factory = (
     [Octokit, githubClient],
     [Git, gitClient],
     [Filesystem, filesystem],
+    [Logger, logger],
     ...argDeps
   ).setIsSpawnedFromCli(true);
 };
 
 const programExitSpy = jest.spyOn(process, "exit");
-const consoleErrorSpy = jest.spyOn(console, "error");
 const cwdSpy = jest.spyOn(process, "cwd");
-const stdoutSpy = jest.spyOn(process.stdout, "write");
 
 /**
  * These test all the modules that consist of this program, excluding only
@@ -284,15 +288,18 @@ describe("integration", () => {
   });
 
   it("should correctly generate and write the CHANGELOG", async () => {
+    const onPrintError = jest.fn((e: string) => {});
+
     const action = factory({
       argMocks: {
         version: "2.0.2",
       },
+      logError: onPrintError,
     });
 
     await expect(action.run()).resolves.toEqual(expect.any(String));
 
-    expect(consoleErrorSpy).not.toHaveBeenCalled();
+    expect(onPrintError).not.toHaveBeenCalled();
     expect(programExitSpy).not.toHaveBeenCalled();
 
     const expectedChangelog = [
@@ -339,16 +346,19 @@ describe("integration", () => {
   describe("arguments should correctly modify the behavior of the program", () => {
     describe("output file", () => {
       it("with a relative path", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             outputFile: "./docs/history.md",
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
@@ -358,16 +368,19 @@ describe("integration", () => {
       });
 
       it("with a absolute path", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             outputFile: "/home/user/projects/my-project/H.md",
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
@@ -379,16 +392,19 @@ describe("integration", () => {
 
     describe("date format", () => {
       it("ISO format", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             dateFormat: "yyyy-MM-dd'T'HH:mm:ss",
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         expect(FilesystemMock.prepend.mock.calls[0]![1]).toMatch(
@@ -397,16 +413,19 @@ describe("integration", () => {
       });
 
       it("custom format", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             dateFormat: "yyyy-MM-dd",
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         expect(FilesystemMock.prepend.mock.calls[0]![1]).toMatch(
@@ -417,16 +436,19 @@ describe("integration", () => {
 
     describe("include pr description", () => {
       it("when enabled", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             includePrDescription: true,
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -471,16 +493,19 @@ describe("integration", () => {
       });
 
       it("when disabled", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             includePrDescription: false,
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -509,16 +534,19 @@ describe("integration", () => {
 
     describe("only since", () => {
       it("with a date before last tag", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             onlySince: "2020-01-01",
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -567,16 +595,19 @@ describe("integration", () => {
       });
 
       it("with a date after the last tag", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             onlySince: "2023-02-05",
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -611,6 +642,8 @@ describe("integration", () => {
     describe("sloppy", () => {
       describe("when enabled", () => {
         it("and on different branch", async () => {
+          const onPrintError = jest.fn((e: string) => {});
+
           GitClientMock.currentBranch = "feat/some";
 
           const action = factory({
@@ -618,14 +651,15 @@ describe("integration", () => {
               version: "2.0.2",
               sloppy: false,
             },
+            logError: onPrintError,
           });
 
           await expect(action.run()).resolves.toEqual(undefined);
 
-          expect(consoleErrorSpy).toHaveBeenCalled();
+          expect(onPrintError).toHaveBeenCalled();
           expect(programExitSpy).toHaveBeenCalled();
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith("Error: Not on master branch");
+          expect(onPrintError).toHaveBeenCalledWith("Not on master branch");
 
           expect(FilesystemMock.prepend).not.toHaveBeenCalled();
 
@@ -633,6 +667,8 @@ describe("integration", () => {
         });
 
         it("and with un-commited changes", async () => {
+          const onPrintError = jest.fn((e: string) => {});
+
           GitClientMock.currentStatus = "22 test/file.ts";
 
           const action = factory({
@@ -640,14 +676,15 @@ describe("integration", () => {
               version: "2.0.2",
               sloppy: false,
             },
+            logError: onPrintError,
           });
 
           await expect(action.run()).resolves.toEqual(undefined);
 
-          expect(consoleErrorSpy).toHaveBeenCalled();
+          expect(onPrintError).toHaveBeenCalled();
           expect(programExitSpy).toHaveBeenCalled();
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith("Error: Local copy is not clean");
+          expect(onPrintError).toHaveBeenCalledWith("Local copy is not clean");
 
           expect(FilesystemMock.prepend).not.toHaveBeenCalled();
 
@@ -655,6 +692,8 @@ describe("integration", () => {
         });
 
         it("and not up to date with remote", async () => {
+          const onPrintError = jest.fn((e: string) => {});
+
           GitClientMock.getRevListUpTo = () => "<123\n<324";
 
           const action = factory({
@@ -662,15 +701,16 @@ describe("integration", () => {
               version: "2.0.2",
               sloppy: false,
             },
+            logError: onPrintError,
           });
 
           await expect(action.run()).resolves.toEqual(undefined);
 
-          expect(consoleErrorSpy).toHaveBeenCalled();
+          expect(onPrintError).toHaveBeenCalled();
           expect(programExitSpy).toHaveBeenCalled();
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(
-            "Error: Local git master branch is 2 commits ahead and 0 commits behind of origin/master"
+          expect(onPrintError).toHaveBeenCalledWith(
+            "Local git master branch is 2 commits ahead and 0 commits behind of origin/master"
           );
 
           expect(FilesystemMock.prepend).not.toHaveBeenCalled();
@@ -679,6 +719,8 @@ describe("integration", () => {
         });
 
         it("and no origin", async () => {
+          const onPrintError = jest.fn((e: string) => {});
+
           const orgRemotes = GitClientMock.currentRemotes;
           GitClientMock.currentRemotes = "";
 
@@ -687,15 +729,16 @@ describe("integration", () => {
               version: "2.0.2",
               sloppy: false,
             },
+            logError: onPrintError,
           });
 
           await expect(action.run()).resolves.toEqual(undefined);
 
-          expect(consoleErrorSpy).toHaveBeenCalled();
+          expect(onPrintError).toHaveBeenCalled();
           expect(programExitSpy).toHaveBeenCalled();
 
-          expect(consoleErrorSpy).toHaveBeenCalledWith(
-            "Error: This local git repository doesn’t have a remote pointing to git://github.com/repoOwner/repoName.git"
+          expect(onPrintError).toHaveBeenCalledWith(
+            "This local git repository doesn’t have a remote pointing to git://github.com/repoOwner/repoName.git"
           );
 
           expect(FilesystemMock.prepend).not.toHaveBeenCalled();
@@ -705,6 +748,8 @@ describe("integration", () => {
       });
       describe("when disabled", () => {
         it("and on different branch", async () => {
+          const onPrintError = jest.fn((e: string) => {});
+
           GitClientMock.currentBranch = "feat/some";
 
           const action = factory({
@@ -712,11 +757,12 @@ describe("integration", () => {
               version: "2.0.2",
               sloppy: true,
             },
+            logError: onPrintError,
           });
 
           await expect(action.run()).resolves.toEqual(expect.any(String));
 
-          expect(consoleErrorSpy).not.toHaveBeenCalled();
+          expect(onPrintError).not.toHaveBeenCalled();
           expect(programExitSpy).not.toHaveBeenCalled();
 
           expect(FilesystemMock.prepend).toHaveBeenCalled();
@@ -725,6 +771,8 @@ describe("integration", () => {
         });
 
         it("and with un-commited changes", async () => {
+          const onPrintError = jest.fn((e: string) => {});
+
           GitClientMock.currentStatus = "22 test/file.ts";
 
           const action = factory({
@@ -732,11 +780,12 @@ describe("integration", () => {
               version: "2.0.2",
               sloppy: true,
             },
+            logError: onPrintError,
           });
 
           await expect(action.run()).resolves.toEqual(expect.any(String));
 
-          expect(consoleErrorSpy).not.toHaveBeenCalled();
+          expect(onPrintError).not.toHaveBeenCalled();
           expect(programExitSpy).not.toHaveBeenCalled();
 
           expect(FilesystemMock.prepend).toHaveBeenCalled();
@@ -745,6 +794,8 @@ describe("integration", () => {
         });
 
         it("and not up to date with remote", async () => {
+          const onPrintError = jest.fn((e: string) => {});
+
           GitClientMock.getRevListUpTo = () => "<123\n<324";
 
           const action = factory({
@@ -752,11 +803,12 @@ describe("integration", () => {
               version: "2.0.2",
               sloppy: true,
             },
+            logError: onPrintError,
           });
 
           await expect(action.run()).resolves.toEqual(expect.any(String));
 
-          expect(consoleErrorSpy).not.toHaveBeenCalled();
+          expect(onPrintError).not.toHaveBeenCalled();
           expect(programExitSpy).not.toHaveBeenCalled();
 
           expect(FilesystemMock.prepend).toHaveBeenCalled();
@@ -765,6 +817,8 @@ describe("integration", () => {
         });
 
         it("and no origin", async () => {
+          const onPrintError = jest.fn((e: string) => {});
+
           const orgRemotes = GitClientMock.currentRemotes;
           GitClientMock.currentRemotes = "";
 
@@ -773,11 +827,12 @@ describe("integration", () => {
               version: "2.0.2",
               sloppy: true,
             },
+            logError: onPrintError,
           });
 
           await expect(action.run()).resolves.toEqual(expect.any(String));
 
-          expect(consoleErrorSpy).not.toHaveBeenCalled();
+          expect(onPrintError).not.toHaveBeenCalled();
           expect(programExitSpy).not.toHaveBeenCalled();
 
           expect(FilesystemMock.prepend).toHaveBeenCalled();
@@ -789,23 +844,24 @@ describe("integration", () => {
 
     describe("trace", () => {
       it("should add a stack trace to the error message when enabled", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             trace: true,
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(undefined);
 
-        expect(consoleErrorSpy).toHaveBeenCalled();
+        expect(onPrintError).toHaveBeenCalled();
         expect(programExitSpy).toHaveBeenCalled();
 
         const errStackRegexp =
           /Error: version-number not specified\n(\s+at .+?\((\/.+?)+\.ts:\d+:\d+\)\n?)+/m;
 
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
-          expect.stringMatching(errStackRegexp)
-        );
+        expect(onPrintError).toHaveBeenCalledWith(expect.stringMatching(errStackRegexp));
 
         expect(FilesystemMock.prepend).not.toHaveBeenCalled();
       });
@@ -813,16 +869,19 @@ describe("integration", () => {
 
     describe("valid labels", () => {
       it("with a single label: 'documentation'", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             validLabels: "documentation",
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -873,16 +932,19 @@ describe("integration", () => {
       });
 
       it("with two labels: 'documentation' and 'chore'", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             validLabels: "documentation,chore",
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -939,6 +1001,8 @@ describe("integration", () => {
 
     describe("group by labels", () => {
       it("groups pr by default labels", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         GithubClientMock.request.mockImplementationOnce(async () => {
           return {
             data: [
@@ -959,11 +1023,12 @@ describe("integration", () => {
             version: "2.0.2",
             groupByLabels: true,
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -1008,17 +1073,20 @@ describe("integration", () => {
       });
 
       it("groups pr by provided labels", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             groupByLabels: true,
             validLabels: "bugs,features,enhancements",
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -1065,17 +1133,20 @@ describe("integration", () => {
       });
 
       it("groups prs that have matching labels while also grouping by matchers", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             groupByLabels: true,
             validLabels: "bugs",
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -1122,16 +1193,19 @@ describe("integration", () => {
 
     describe("group by matchers", () => {
       it("doesn't group pr when disabled and no valid labels", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             groupByMatchers: false,
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -1174,47 +1248,54 @@ describe("integration", () => {
 
     describe("output to stdout", () => {
       it("outputs to stdout when enabled", async () => {
-        stdoutSpy.mockImplementationOnce(() => true);
+        const onPrintError = jest.fn((e: string) => {});
+        const onWrite = jest.fn((e: string) => {});
 
         const action = factory({
           argMocks: {
             version: "2.0.2",
             outputToStdout: true,
           },
+          logError: onPrintError,
+          logWrite: onWrite,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
         expect(FilesystemMock.prepend).not.toHaveBeenCalled();
 
-        expect(stdoutSpy).toHaveBeenCalledTimes(1);
-        expect(stdoutSpy).toHaveBeenCalledWith(expect.stringMatching(/## 2\.0\.2 .+/));
+        expect(onWrite).toHaveBeenCalledTimes(1);
+        expect(onWrite).toHaveBeenCalledWith(expect.stringMatching(/## 2\.0\.2 .+/));
       });
     });
 
     describe("no output", () => {
       it("doesn't write to a file when enabled", async () => {
-        stdoutSpy.mockImplementationOnce(() => true);
+        const onPrintError = jest.fn((e: string) => {});
+        const onWrite = jest.fn((e: string) => {});
 
         const action = factory({
           argMocks: {
             version: "2.0.2",
             noOutput: true,
           },
+          logError: onPrintError,
+          logWrite: onWrite,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
         expect(FilesystemMock.prepend).not.toHaveBeenCalled();
-        expect(stdoutSpy).not.toHaveBeenCalled();
+        expect(onWrite).not.toHaveBeenCalled();
       });
 
       it("doesn't print to stdout when enabled", async () => {
-        stdoutSpy.mockImplementationOnce(() => true);
+        const onPrintError = jest.fn((e: string) => {});
+        const onWrite = jest.fn((e: string) => {});
 
         const action = factory({
           argMocks: {
@@ -1222,29 +1303,34 @@ describe("integration", () => {
             outputToStdout: true,
             noOutput: true,
           },
+          logError: onPrintError,
+          logWrite: onWrite,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
         expect(FilesystemMock.prepend).not.toHaveBeenCalled();
-        expect(stdoutSpy).not.toHaveBeenCalled();
+        expect(onWrite).not.toHaveBeenCalled();
       });
     });
 
     describe("exclude prs", () => {
       it("should not include prs that have the matching id", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
             excludePrs: "1,4",
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -1271,6 +1357,8 @@ describe("integration", () => {
 
     describe("exclude patterns", () => {
       it("should exclude prs that match any of the given patterns", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
@@ -1284,11 +1372,12 @@ describe("integration", () => {
               },
             ],
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [
@@ -1323,6 +1412,8 @@ describe("integration", () => {
       });
 
       it("when specified via argument", async () => {
+        const onPrintError = jest.fn((e: string) => {});
+
         const action = factory({
           argMocks: {
             version: "2.0.2",
@@ -1331,11 +1422,12 @@ describe("integration", () => {
           config: {
             excludePatterns: [".+"],
           },
+          logError: onPrintError,
         });
 
         await expect(action.run()).resolves.toEqual(expect.any(String));
 
-        expect(consoleErrorSpy).not.toHaveBeenCalled();
+        expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
 
         const expectedChangelog = [

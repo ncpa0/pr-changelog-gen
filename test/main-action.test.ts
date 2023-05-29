@@ -30,11 +30,14 @@ import type { Config } from "../src/modules/config";
 import { ConfigFacade } from "../src/modules/config";
 import { ConfigLoader } from "../src/modules/config-loader";
 import { EnvvarReader } from "../src/modules/envvar-reader";
+import { Logger } from "../src/modules/logger";
 import { CliService } from "../src/services/cli";
 import type { Constructor } from "../src/utils/dependency-injector/inject";
 import { Inject } from "../src/utils/dependency-injector/inject";
 import type { Dependencies } from "../src/utils/dependency-injector/service";
 import { Service } from "../src/utils/dependency-injector/service";
+import type { LoggerMockParams } from "./shared";
+import { LoggerMock } from "./shared";
 
 const ALL_ARGS = {
   sloppy: ArgSloppy as Constructor,
@@ -69,7 +72,7 @@ const factory = (
     cliServiceMock?: any;
     config?: Partial<Config>;
     envvars?: Record<string, any>;
-  } = {}
+  } & LoggerMockParams = {}
 ) => {
   const {
     argMocks,
@@ -95,11 +98,14 @@ const factory = (
     get: (key: string) => envvars[key],
   };
 
+  const logger = new LoggerMock(params);
+
   return MainAction.init(
     [ConfigLoader, configLoaderMock],
     [EnvvarReader, envvarReaderMock],
     [CliService, cliServiceMock ?? { run: cliRun }],
     [Octokit, githubClient],
+    [Logger, logger],
     ...argDeps
   ).setIsSpawnedFromCli(true);
 };
@@ -136,7 +142,6 @@ const createCliForConfigTesting = async (
 };
 
 const programExitSpy = jest.spyOn(process, "exit");
-const consoleErrorSpy = jest.spyOn(console, "error");
 
 describe("MainAction", () => {
   beforeAll(() => {
@@ -145,7 +150,6 @@ describe("MainAction", () => {
   });
 
   afterEach(() => {
-    consoleErrorSpy.mockClear();
     programExitSpy.mockClear();
   });
 
@@ -154,16 +158,19 @@ describe("MainAction", () => {
   });
 
   it("should properly initialize without optional arguments", () => {
+    const onPrintError = jest.fn((e: string) => {});
+
     expect(
       (() => {
         const action = factory({
           argMocks: { version: "1.0.0" },
+          logError: onPrintError,
         });
         return action.run();
       })()
     ).resolves.toBe(undefined);
 
-    expect(consoleErrorSpy).not.toHaveBeenCalled();
+    expect(onPrintError).not.toHaveBeenCalled();
     expect(programExitSpy).not.toHaveBeenCalled();
   });
 
@@ -212,59 +219,68 @@ describe("MainAction", () => {
 
   describe("should fail when the config values are invalid", () => {
     it("dateFormat", async () => {
+      const onPrintError = jest.fn((e: string) => {});
+
       const action = factory({
         argMocks: { version: "1.0.0" },
         config: {
           // @ts-expect-error
           dateFormat: true,
         },
+        logError: onPrintError,
       });
 
       await action.run();
 
-      expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+      expect(onPrintError).toHaveBeenCalledTimes(1);
       expect(programExitSpy).toHaveBeenCalledTimes(1);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Error: Invalid config property: 'true' at [config.dateFormat]"
+      expect(onPrintError).toHaveBeenCalledWith(
+        "Invalid config property: 'true' at [config.dateFormat]"
       );
     });
 
     it("sloppy", async () => {
+      const onPrintError = jest.fn((e: string) => {});
+
       const action = factory({
         argMocks: { version: "1.0.0" },
         config: {
           // @ts-expect-error
           sloppy: "",
         },
+        logError: onPrintError,
       });
 
       await action.run();
 
-      expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+      expect(onPrintError).toHaveBeenCalledTimes(1);
       expect(programExitSpy).toHaveBeenCalledTimes(1);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Error: Invalid config property: '' at [config.sloppy]"
+      expect(onPrintError).toHaveBeenCalledWith(
+        "Invalid config property: '' at [config.sloppy]"
       );
     });
 
     it("prTitleMatcher", async () => {
+      const onPrintError = jest.fn((e: string) => {});
+
       const action = factory({
         argMocks: { version: "1.0.0" },
         config: {
           // @ts-expect-error
           prTitleMatcher: ["abc", {}],
         },
+        logError: onPrintError,
       });
 
       await action.run();
 
-      expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+      expect(onPrintError).toHaveBeenCalledTimes(1);
       expect(programExitSpy).toHaveBeenCalledTimes(1);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Error: Invalid config property: 'abc,[object Object]' at [config.prTitleMatcher]"
+      expect(onPrintError).toHaveBeenCalledWith(
+        "Invalid config property: 'abc,[object Object]' at [config.prTitleMatcher]"
       );
     });
   });

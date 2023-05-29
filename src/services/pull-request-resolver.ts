@@ -79,6 +79,7 @@ export class PullRequestResolverService extends Service {
         state: "closed",
         base: "master",
         sort: "updated",
+        direction: "desc",
         per_page: 100,
       }
     );
