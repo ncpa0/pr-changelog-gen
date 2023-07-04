@@ -1466,6 +1466,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/json-schema@npm:^7.0.12":
+  version: 7.0.12
+  resolution: "@types/json-schema@npm:7.0.12"
+  checksum: 00239e97234eeb5ceefb0c1875d98ade6e922bfec39dd365ec6bd360b5c2f825e612ac4f6e5f1d13601b8b30f378f15e6faa805a3a732f4a1bbe61915163d293
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:*":
   version: 18.16.3
   resolution: "@types/node@npm:18.16.3"
@@ -2408,7 +2415,7 @@ clify.js@ncpa0cpl/clify.js:
   languageName: node
   linkType: hard
 
-"dilswer@npm:2.0.2, dilswer@npm:^2.0.2":
+"dilswer@npm:2.0.2":
   version: 2.0.2
   resolution: "dilswer@npm:2.0.2"
   dependencies:
@@ -2423,6 +2430,15 @@ clify.js@ncpa0cpl/clify.js:
   dependencies:
     "@types/json-schema": ^7.0.11
   checksum: c31cc0f6a6d537e2641ebb303c6a1eea776cda2ca63780b5ce0256b1444449defa3e6ded5486a7c1be2e2b4a01f1b0b367dfd1e17fb6152845f2ce6bc013b3b3
+  languageName: node
+  linkType: hard
+
+"dilswer@npm:^2.0.2":
+  version: 2.1.1
+  resolution: "dilswer@npm:2.1.1"
+  dependencies:
+    "@types/json-schema": ^7.0.12
+  checksum: 4b02ef1864341767cde436fe5971f9e272a92385f415290d0f7165e33ed1d89b2df320416357bf0bc9fb11018a229b49ecd6c91ee6a28c8fe9f8c211b9e6a8fe
   languageName: node
   linkType: hard
 
