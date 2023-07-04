@@ -70,7 +70,7 @@
     "Szymon Bretner <szymonb21@gmail.com"
   ],
   "engines": {
-    "node": ">18"
+    "node": ">=18"
   },
   "packageManager": "yarn@3.5.0"
 }
