@@ -1267,7 +1267,10 @@ describe("integration", () => {
         expect(FilesystemMock.prepend).not.toHaveBeenCalled();
 
         expect(onWrite).toHaveBeenCalledTimes(1);
-        expect(onWrite).toHaveBeenCalledWith(expect.stringMatching(/## 2\.0\.2 .+/), expect.anything());
+        expect(onWrite).toHaveBeenCalledWith(
+          expect.stringMatching(/## 2\.0\.2 .+/),
+          expect.anything()
+        );
       });
     });
 

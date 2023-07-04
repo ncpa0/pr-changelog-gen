@@ -12,7 +12,8 @@
   },
   "scripts": {
     "build": "./scripts/build.mjs",
-    "lint:fix": "eslint -- --fix && prettier . --write",
+    "fix:lint": "eslint --fix .",
+    "fix:prettier": "prettier ./ -w",
     "test:eslint": "eslint .",
     "test:prettier": "prettier -c ./**/*.ts",
     "test:tsc": "tsc --noEmit",
