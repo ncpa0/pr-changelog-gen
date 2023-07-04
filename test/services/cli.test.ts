@@ -150,18 +150,18 @@ describe("CliService", () => {
   });
 
   it("prints the generated changelog when `outputToStdout` is enabled", async () => {
-    const onStdoutWrite = jest.fn((v: string) => {});
+    const logWriteMock = jest.fn((v: string) => {});
 
     const cli = createCli({
       config: mockConfig({ outputToStdout: true }),
-      logWrite: onStdoutWrite,
+      logWrite: logWriteMock,
       createChangelog: async () => "generated changelog",
     });
 
     await cli.run("1.0.0", packageInfo);
 
-    expect(onStdoutWrite).toHaveBeenCalledTimes(1);
-    expect(onStdoutWrite).toHaveBeenCalledWith("generated changelog");
+    expect(logWriteMock).toHaveBeenCalledTimes(1);
+    expect(logWriteMock).toHaveBeenCalledWith("generated changelog", expect.anything());
   });
 
   it("prints a warning when no pull requests were found", async () => {
