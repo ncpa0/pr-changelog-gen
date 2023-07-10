@@ -985,13 +985,14 @@ __metadata:
   linkType: hard
 
 "@ncpa0cpl/nodepack@npm:^2.1.3":
-  version: 2.1.3
-  resolution: "@ncpa0cpl/nodepack@npm:2.1.3"
+  version: 2.2.2
+  resolution: "@ncpa0cpl/nodepack@npm:2.2.2"
   dependencies:
     "@ncpa0cpl/node-worker-bridge": ^0.0.3
-    "@ts-morph/bootstrap": ^0.19.0
-    dilswer: 2.0.2
+    "@ts-morph/bootstrap": ^0.20.0
+    dilswer: 2.1.1
     json-to-ts: ^1.7.0
+    lodash.mergewith: ^4.6.2
     node-os-walk: ">=1.0.2"
     pretty-error: ^4.0.0
   peerDependencies:
@@ -999,7 +1000,7 @@ __metadata:
   dependenciesMeta:
     json-to-ts:
       optional: true
-  checksum: 459657aec364b29d1ac1a4b52914ca89e9b72fe4b9d2e2d3d4047576c6e65a606b2d37e7645c323477ca9abcccebe8b4df6932e229dcd35ef3f59b4eb4927647
+  checksum: a8fa66541afc2a9abdce7fedef333687a0590578406c2f066cd784e0034d598f55345f0cd7fab493564214f6a9811774a2a31b347e9c13de3fdc603d8a9487e8
   languageName: node
   linkType: hard
 
@@ -1363,24 +1364,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ts-morph/bootstrap@npm:^0.19.0":
-  version: 0.19.0
-  resolution: "@ts-morph/bootstrap@npm:0.19.0"
+"@ts-morph/bootstrap@npm:^0.20.0":
+  version: 0.20.0
+  resolution: "@ts-morph/bootstrap@npm:0.20.0"
   dependencies:
-    "@ts-morph/common": ~0.19.0
-  checksum: 29fac15059c813ae3f6c6f966e0eceddb8b32a3d43d60f43083e54d9e37db50d00bbd451e867a24915861f58f580ebceeb0044e18462e8e2810229c4bef723d3
+    "@ts-morph/common": ~0.20.0
+  checksum: 998d9378728f27a59cfcc8348a84400b7089f08c4cc91406f11cd07f2e2734498b3181bb54b3893f40934a2a6daf8df0a09dd01c0398431d124cda65e0306150
   languageName: node
   linkType: hard
 
-"@ts-morph/common@npm:~0.19.0":
-  version: 0.19.0
-  resolution: "@ts-morph/common@npm:0.19.0"
+"@ts-morph/common@npm:~0.20.0":
+  version: 0.20.0
+  resolution: "@ts-morph/common@npm:0.20.0"
   dependencies:
     fast-glob: ^3.2.12
     minimatch: ^7.4.3
     mkdirp: ^2.1.6
     path-browserify: ^1.0.1
-  checksum: 6b02a63ded0ce77e2bf86e135c17a6d5126307bbb926a4085d3cc2acaf28cb732780cf8d16961e9600efcc599876f706a2c9e8d135f7668704bb04a1a6fd37ec
+  checksum: eb02480971fbe045b4dd099d1ddb262d47d657197fefb73a4a2c89523975bfb0b23050207d49d19e853ef23bffdcb9d89a778f52f6b3385ae5bcf63322523700
   languageName: node
   linkType: hard
 
@@ -2467,12 +2468,12 @@ clify.js@ncpa0cpl/clify.js:
   languageName: node
   linkType: hard
 
-"dilswer@npm:2.0.2":
-  version: 2.0.2
-  resolution: "dilswer@npm:2.0.2"
+"dilswer@npm:2.1.1, dilswer@npm:^2.0.2":
+  version: 2.1.1
+  resolution: "dilswer@npm:2.1.1"
   dependencies:
-    "@types/json-schema": ^7.0.11
-  checksum: 53c0b1e348dc4e86a9d9869e22b5f6ded65c104a0af033d6d1bd70d58c61af123da1887de68fb2be9563e6909f565af25e6dae1ef8f0547306457c866cfd402e
+    "@types/json-schema": ^7.0.12
+  checksum: 4b02ef1864341767cde436fe5971f9e272a92385f415290d0f7165e33ed1d89b2df320416357bf0bc9fb11018a229b49ecd6c91ee6a28c8fe9f8c211b9e6a8fe
   languageName: node
   linkType: hard
 
@@ -2482,15 +2483,6 @@ clify.js@ncpa0cpl/clify.js:
   dependencies:
     "@types/json-schema": ^7.0.11
   checksum: c31cc0f6a6d537e2641ebb303c6a1eea776cda2ca63780b5ce0256b1444449defa3e6ded5486a7c1be2e2b4a01f1b0b367dfd1e17fb6152845f2ce6bc013b3b3
-  languageName: node
-  linkType: hard
-
-"dilswer@npm:^2.0.2":
-  version: 2.1.1
-  resolution: "dilswer@npm:2.1.1"
-  dependencies:
-    "@types/json-schema": ^7.0.12
-  checksum: 4b02ef1864341767cde436fe5971f9e272a92385f415290d0f7165e33ed1d89b2df320416357bf0bc9fb11018a229b49ecd6c91ee6a28c8fe9f8c211b9e6a8fe
   languageName: node
   linkType: hard
 
@@ -4521,6 +4513,13 @@ git-hook-tasks@ncpa0cpl/git-hook-tasks:
   version: 4.6.2
   resolution: "lodash.merge@npm:4.6.2"
   checksum: ad580b4bdbb7ca1f7abf7e1bce63a9a0b98e370cf40194b03380a46b4ed799c9573029599caebc1b14e3f24b111aef72b96674a56cfa105e0f5ac70546cdc005
+  languageName: node
+  linkType: hard
+
+"lodash.mergewith@npm:^4.6.2":
+  version: 4.6.2
+  resolution: "lodash.mergewith@npm:4.6.2"
+  checksum: a6db2a9339752411f21b956908c404ec1e088e783a65c8b29e30ae5b3b6384f82517662d6f425cc97c2070b546cc2c7daaa8d33f78db7b6e9be06cd834abdeb8
   languageName: node
   linkType: hard
 
