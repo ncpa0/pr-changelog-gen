@@ -42,7 +42,7 @@
     "@types/node": "^20.2.5",
     "@types/parse-github-repo-url": "^1.4.0",
     "@types/semver": "^7.5.0",
-    "@typescript-eslint/eslint-plugin": "^5.59.7",
+    "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^5.59.7",
     "axios": "^1.4.0",
     "esbuild": "^0.17.19",
