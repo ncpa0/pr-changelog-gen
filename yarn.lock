@@ -5213,7 +5213,7 @@ git-hook-tasks@ncpa0cpl/git-hook-tasks:
     prettier: ^2.8.8
     reflect-metadata: ^0.1.13
     semver: ^7.5.1
-    termx-markup: ^1.1.0
+    termx-markup: ^2.0.2
     typescript: ^5.0.4
   bin:
     pr-changelog-gen: ./bin/pr-changelog-gen.mjs
@@ -5856,10 +5856,10 @@ git-hook-tasks@ncpa0cpl/git-hook-tasks:
   languageName: node
   linkType: hard
 
-"termx-markup@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "termx-markup@npm:1.1.0"
-  checksum: d8b4a2ad887a7faad4bbff7a3dfa7de9b0e954a4c8da1a2d87afc2eaf9d44923909f60f087fd129ad8cda095b2b4463f8d86e2019dea4e27c806dae693b70b95
+"termx-markup@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "termx-markup@npm:2.0.2"
+  checksum: 76fb4afc5e906a261bf5fad0baf082fdb73ad1a0d6f69f95ab4e17c91a3f214b9b4bc5b150d075054a6ea7b65da01b570c3efa23a119bbfaa6511ff5741dfec4
   languageName: node
   linkType: hard
 
