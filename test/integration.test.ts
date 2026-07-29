@@ -1,12 +1,4 @@
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  jest,
-} from "@jest/globals";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi as jest } from "vitest";
 import { Octokit } from "@octokit/rest";
 import {
   ArgDateFormat,

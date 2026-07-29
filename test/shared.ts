@@ -1,9 +1,9 @@
-import { jest } from "@jest/globals";
+import { vi as jest, Mock } from "vitest";
 import type { Octokit } from "@octokit/rest";
 import type { Config } from "../src/modules/config";
 import { ConfigFacade } from "../src/modules/config";
-import type { Logger } from "./modules/logger";
-import type { PullResponse } from "./services/pull-request-resolver";
+import type { Logger } from "../src/modules/logger";
+import type { PullResponse } from "../src/services/pull-request-resolver";
 
 type DeepPartial<T> = T extends object
   ? {
@@ -58,9 +58,9 @@ export const mockGithubClient = (
 };
 
 export type LoggerMockParams = {
-  logWrite?: jest.Mock<(v: string) => void>;
-  logWarn?: jest.Mock<(v: string) => void>;
-  logError?: jest.Mock<(v: string) => void>;
+  logWrite?: Mock<(v: string) => void>;
+  logWarn?: Mock<(v: string) => void>;
+  logError?: Mock<(v: string) => void>;
 };
 
 export class LoggerMock implements AsInterface<Logger> {

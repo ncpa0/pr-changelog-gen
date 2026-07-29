@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from "@jest/globals";
+import { describe, expect, it, vi as jest } from "vitest";
 import { ConfigFacade } from "../../src/modules/config";
 import { Filesystem } from "../../src/modules/filesystem";
 import { Logger } from "../../src/modules/logger";
@@ -9,7 +9,7 @@ import { PullRequestResolverService } from "../../src/services/pull-request-reso
 import { Repo } from "../../src/utils/repo";
 import type { LoggerMockParams } from "../shared";
 import { LoggerMock, mockConfig } from "../shared";
-import type { PullRequest, SemverNumber } from "../shared-types";
+import type { PullRequest, SemverNumber } from "../../src/shared-types";
 
 export type CliFactoryParams = {
   ensureCleanLocalGitState: (githubRepo: Repo) => Promise<void>;

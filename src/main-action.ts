@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest";
-import { Type, createValidator } from "dilswer";
+import { Type, validator } from "dilswer";
 import {
   ArgDateFormat,
   ArgExcludePattern,
@@ -108,7 +108,7 @@ export class MainAction extends Service {
 
         const packageConfig = await this.configLoader.loadConfig();
 
-        const isNumeric = createValidator(Type.StringInt);
+        const isNumeric = validator(Type.String.Int);
 
         const config = new ConfigFacade(packageConfig, {
           prTitleMatcher: this.prTitleMatcher.value,

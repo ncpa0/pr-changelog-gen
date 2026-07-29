@@ -1,12 +1,4 @@
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  jest,
-} from "@jest/globals";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi as jest } from "vitest";
 import { Octokit } from "@octokit/rest";
 import {
   ArgDateFormat,
@@ -236,7 +228,7 @@ describe("MainAction", () => {
       expect(programExitSpy).toHaveBeenCalledTimes(1);
 
       expect(onPrintError).toHaveBeenCalledWith(
-        "Invalid config property: 'true' at [config.dateFormat]"
+        "Invalid config property: 'config.dateFormat'"
       );
     });
 
@@ -258,7 +250,7 @@ describe("MainAction", () => {
       expect(programExitSpy).toHaveBeenCalledTimes(1);
 
       expect(onPrintError).toHaveBeenCalledWith(
-        "Invalid config property: '' at [config.sloppy]"
+        "Invalid config property: 'config.sloppy'"
       );
     });
 
@@ -280,7 +272,7 @@ describe("MainAction", () => {
       expect(programExitSpy).toHaveBeenCalledTimes(1);
 
       expect(onPrintError).toHaveBeenCalledWith(
-        "Invalid config property: 'abc,[object Object]' at [config.prTitleMatcher]"
+        "Invalid config property: 'config.prTitleMatcher'"
       );
     });
   });

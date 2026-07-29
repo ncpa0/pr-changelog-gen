@@ -1,40 +1,40 @@
-import type { GetDataType } from "dilswer";
-import { OptionalField, Type, ValidationError, assertDataType } from "dilswer";
+import type { Infer } from "dilswer";
+import { Type, validator } from "dilswer";
 
-const RegexType = Type.RecordOf({
+const RegexType = Type.Record({
   regexp: Type.String,
-  flags: OptionalField(Type.String),
+  flags: Type.Option(Type.String),
 });
 
-const LabeledRegex = Type.RecordOf({
+const LabeledRegex = Type.Record({
   regexp: Type.String,
-  flags: OptionalField(Type.String),
-  label: OptionalField(Type.String),
+  flags: Type.Option(Type.String),
+  label: Type.Option(Type.String),
 });
 
 const PrTitleMatcher = Type.OneOf(Type.String, LabeledRegex);
 
-export const ConfigSchema = Type.RecordOf({
-  sloppy: OptionalField(Type.Boolean),
-  dateFormat: OptionalField(Type.String),
-  validLabels: OptionalField(Type.ArrayOf(Type.String)),
-  prTitleMatcher: OptionalField(Type.OneOf(PrTitleMatcher, Type.ArrayOf(PrTitleMatcher))),
-  includePrBody: OptionalField(Type.Boolean),
-  outputFile: OptionalField(Type.String),
-  onlySince: OptionalField(Type.String),
-  groupByLabels: OptionalField(Type.Boolean),
-  groupByMatchers: OptionalField(Type.Boolean),
-  outputToStdout: OptionalField(Type.Boolean),
-  noOutput: OptionalField(Type.Boolean),
-  excludePrs: OptionalField(Type.ArrayOf(Type.StringInt, Type.Int)),
-  excludePatterns: OptionalField(
-    Type.OneOf(Type.String, Type.ArrayOf(Type.String, RegexType))
+export const ConfigSchema = Type.Record({
+  sloppy: Type.Option(Type.Boolean),
+  dateFormat: Type.Option(Type.String),
+  validLabels: Type.Option(Type.Array(Type.String)),
+  prTitleMatcher: Type.Option(Type.OneOf(PrTitleMatcher, Type.Array(PrTitleMatcher))),
+  includePrBody: Type.Option(Type.Boolean),
+  outputFile: Type.Option(Type.String),
+  onlySince: Type.Option(Type.String),
+  groupByLabels: Type.Option(Type.Boolean),
+  groupByMatchers: Type.Option(Type.Boolean),
+  outputToStdout: Type.Option(Type.Boolean),
+  noOutput: Type.Option(Type.Boolean),
+  excludePrs: Type.Option(Type.Array(Type.String.Int, Type.Int)),
+  excludePatterns: Type.Option(
+    Type.OneOf(Type.String, Type.Array(Type.String, RegexType))
   ),
 });
 
-export type Config = GetDataType<typeof ConfigSchema>;
+export type Config = Infer<typeof ConfigSchema>;
 
-export type LabeledRegexp = GetDataType<typeof LabeledRegex>;
+export type LabeledRegexp = Infer<typeof LabeledRegex>;
 
 type Defined<T> = Exclude<T, undefined | null>;
 
@@ -60,18 +60,12 @@ export class ConfigFacade {
   }
 
   private assertConfigType(config: any): asserts config is Config {
-    try {
-      assertDataType(ConfigSchema, config);
-    } catch (err) {
-      if (ValidationError.isValidationError(err)) {
-        throw new Error(
-          `Invalid config property: '${
-            err.receivedValue
-          }' at [config.${err.fieldPath.substring(2)}]`
-        );
-      } else {
-        throw err;
-      }
+    const validateConfig = validator(ConfigSchema, { details: true });
+    const result = validateConfig(config);
+    if (!result.success) {
+      throw new Error(
+        `Invalid config property: 'config.${result.error.fieldPath.replace("$.", "")}'`
+      );
     }
   }
 

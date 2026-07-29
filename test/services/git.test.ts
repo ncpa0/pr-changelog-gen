@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from "@jest/globals";
+import { describe, expect, it, vi as jest } from "vitest";
 import { Git } from "../../src/modules/git-client";
 import { GitService } from "../../src/services/git";
 import { Repo } from "../../src/utils/repo";

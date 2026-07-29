@@ -1,10 +1,10 @@
-import { describe, expect, it } from "@jest/globals";
+import { describe, expect, it } from "vitest";
 import { ConfigFacade } from "../../src/modules/config";
 import { DateResolver } from "../../src/modules/date-resolver";
 import { ChangelogGeneratorService } from "../../src/services/changelog-generator";
 import { Repo } from "../../src/utils/repo";
 import { mockConfig } from "../shared";
-import type { PullRequest } from "../shared-types";
+import type { PullRequest } from "../../src/shared-types";
 
 const repository = new Repo("foo", "bar");
 

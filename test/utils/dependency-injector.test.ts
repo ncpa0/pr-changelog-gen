@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals";
+import { describe, expect, it } from "vitest";
 import { Inject } from "../../src/utils/dependency-injector/inject";
 import { Service } from "../../src/utils/dependency-injector/service";
 

@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from "@jest/globals";
+import { describe, expect, it, vi as jest, Mock } from "vitest";
 import { Octokit } from "@octokit/rest";
 import { ConfigFacade } from "../../src/modules/config";
 import { Git } from "../../src/modules/git-client";
@@ -12,7 +12,7 @@ const anyRepo = new Repo("any", "repo");
 function factory(
   deps: {
     config?: ConfigFacade;
-    git?: jest.Mock<(cmd: string | string[]) => Promise<string>>;
+    git?: Mock<(cmd: string | string[]) => Promise<string>>;
     githubClient?: any;
     gitCmdResults?: Array<[arg: string, result: string]>;
   } = {}

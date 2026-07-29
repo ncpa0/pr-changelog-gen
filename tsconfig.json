@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
+    "lib": ["es2015", "dom"],
     "target": "ESNext",
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist" /* Specify what JSX code is generated. */,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "module": "ESNext" /* Specify the root folder within your source files. */,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "downlevelIteration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -17,7 +17,7 @@
     "noUnusedLocals": true,
     "noUncheckedIndexedAccess": true,
     "skipDefaultLibCheck": true,
-    "skipLibCheck": true
-  },
-  "exclude": ["./test"]
+    "skipLibCheck": true,
+    "types": ["node", "@types/node"]
+  }
 }

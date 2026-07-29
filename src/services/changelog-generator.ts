@@ -1,5 +1,5 @@
 import { format as formatDate } from "date-fns";
-import enLocale from "date-fns/locale/en-US/index.js";
+import { enUS } from "date-fns/locale";
 import type { LabeledRegexp } from "../modules/config";
 import { ConfigFacade } from "../modules/config";
 import { DateResolver } from "../modules/date-resolver";
@@ -244,7 +244,7 @@ export class ChangelogGeneratorService extends Service {
     const dateFormat = this.config.get("dateFormat", "MMMM d, yyyy");
 
     const date = formatDate(this.dateResolver.getCurrentDate(), dateFormat, {
-      locale: enLocale,
+      locale: enUS,
     });
     const title = `## ${newVersionNumber} (${date})`;
 

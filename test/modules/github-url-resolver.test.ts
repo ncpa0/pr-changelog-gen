@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals";
+import { describe, expect, it } from "vitest";
 import { GithubUrlResolver } from "../../src/modules/github-url-resolver";
 import { Repo } from "../../src/utils/repo";
 
