@@ -12,13 +12,14 @@
   },
   "scripts": {
     "build": "./scripts/build.mjs",
-    "fix:lint": "eslint --fix .",
-    "fix:prettier": "prettier ./ -w",
-    "test:eslint": "eslint .",
-    "test:prettier": "prettier -c ./**/*.ts",
+    "fix:lint": "oxlint --fix",
+    "fmt": "dprint fmt",
+    "test:lint": "oxlint",
+    "test:fmt": "dprint fmt --fail-on-change",
     "test:tsc": "tsc --noEmit",
-    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "upgrade:deps": "node ./scripts/upgrade-deps.mjs"
+    "test:unit": "vitest run",
+    "upgrade:deps": "node ./scripts/upgrade-deps.mjs",
+    "prepare": "husky install"
   },
   "license": "MIT",
   "dependencies": {

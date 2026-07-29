@@ -5,11 +5,11 @@
     "pre-push": [
       {
         "name": "Lint",
-        "script": "test:eslint"
+        "script": "test:lint"
       },
       {
         "name": "Formatting",
-        "script": "test:prettier"
+        "script": "test:fmt"
       },
       {
         "name": "Type check",
