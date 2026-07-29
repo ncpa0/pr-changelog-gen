@@ -22,7 +22,11 @@ jobs:
           cache: yarn
       - name: Install dependencies
         run: ./.yarn/yarn.cjs install --immutable --mode=skip-build
-      - name: Lint and Tests
-        run: ./.yarn/yarn.cjs git-hook-tasks pre-push
+      - name: Validating syntax
+        run: ./.yarn/yarn.cjs test:tsc
+      - name: Linting
+        run: ./.yarn/yarn.cjs test:lint
+      - name: Validating formatting
+        run: ./.yarn/yarn.cjs test:fmt
       - name: Attempt Build
         run: ./.yarn/yarn.cjs build

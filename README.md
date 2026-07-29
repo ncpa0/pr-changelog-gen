@@ -116,8 +116,6 @@ For example:
 }
 ```
 
-To use `pr-changelog-gen` your GitHub project will have to follow the semantic versioning.
-
 ### Project
 
 As `pr-changelog-gen` reads repository information from your project you have to add the `repository` information in your `package.json`
