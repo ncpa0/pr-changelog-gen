@@ -1,5 +1,5 @@
-import { describe, expect, it, vi as jest, Mock } from "vitest";
 import { Octokit } from "@octokit/rest";
+import { describe, expect, it, Mock, vi as jest } from "vitest";
 import { ConfigFacade } from "../../src/modules/config";
 import { Git } from "../../src/modules/git-client";
 import type { PullResponse } from "../../src/services/pull-request-resolver";
@@ -15,7 +15,7 @@ function factory(
     git?: Mock<(cmd: string | string[]) => Promise<string>>;
     githubClient?: any;
     gitCmdResults?: Array<[arg: string, result: string]>;
-  } = {}
+  } = {},
 ) {
   const {
     config = mockConfig(),
@@ -41,7 +41,7 @@ function factory(
   return PullRequestResolverService.init(
     [Git, { run: git }],
     [Octokit, githubClient],
-    [ConfigFacade, config]
+    [ConfigFacade, config],
   );
 }
 

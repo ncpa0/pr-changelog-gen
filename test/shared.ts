@@ -1,14 +1,13 @@
-import { vi as jest, Mock } from "vitest";
 import type { Octokit } from "@octokit/rest";
+import { Mock, vi as jest } from "vitest";
 import type { Config } from "../src/modules/config";
 import { ConfigFacade } from "../src/modules/config";
 import type { Logger } from "../src/modules/logger";
 import type { PullResponse } from "../src/services/pull-request-resolver";
 
-type DeepPartial<T> = T extends object
-  ? {
-      [P in keyof T]?: DeepPartial<T[P]>;
-    }
+type DeepPartial<T> = T extends object ? {
+    [P in keyof T]?: DeepPartial<T[P]>;
+  }
   : T;
 
 type AsInterface<C> = {
@@ -25,19 +24,19 @@ export const mockConfig = (overrides?: Config, overrideDefaults?: Config) => {
       sloppy: false,
       ...(overrideDefaults ?? {}),
     } satisfies Config,
-    overrides
+    overrides,
   );
 };
 
 export const mockGithubClient = (
-  overrides: DeepPartial<InstanceType<typeof Octokit>> = {}
+  overrides: DeepPartial<InstanceType<typeof Octokit>> = {},
 ) => {
   const deepAssign = (target: any, source: any) => {
     for (const [key, value] of Object.entries(source)) {
       if (
-        typeof value === "object" &&
-        value != null &&
-        Object.getPrototypeOf(value) === Object.prototype
+        typeof value === "object"
+        && value != null
+        && Object.getPrototypeOf(value) === Object.prototype
       ) {
         deepAssign(target[key], value);
       } else {

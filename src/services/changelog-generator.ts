@@ -27,25 +27,30 @@ type PrGroup = {
 
 export class ChangelogGeneratorService extends Service {
   @Inject(() => DateResolver)
-  private declare dateResolver: DateResolver;
+  declare private dateResolver: DateResolver;
 
   @Inject(() => ConfigFacade)
-  private declare config: ConfigFacade;
+  declare private config: ConfigFacade;
 
   _formatLinkToPullRequest(pullRequestId: string | number, repo: Repo) {
     return `[#${pullRequestId}](https://github.com/${repo.path}/pull/${pullRequestId})`;
   }
 
   _formatPullRequest(pullRequest: ParsedPR, repo: Repo, body?: string | null) {
-    if (body)
-      return `- #### ${pullRequest.title} (${this._formatLinkToPullRequest(
+    if (body) {
+      return `- #### ${pullRequest.title} (${
+        this._formatLinkToPullRequest(
+          pullRequest.id,
+          repo,
+        )
+      })\n\n${padAllLines(body, 2)}\n\n`;
+    }
+    return `- #### ${pullRequest.title} (${
+      this._formatLinkToPullRequest(
         pullRequest.id,
-        repo
-      )})\n\n${padAllLines(body, 2)}\n\n`;
-    return `- #### ${pullRequest.title} (${this._formatLinkToPullRequest(
-      pullRequest.id,
-      repo
-    )})\n\n`;
+        repo,
+      )
+    })\n\n`;
   }
 
   _getPrMatchers() {
@@ -261,7 +266,7 @@ export class ChangelogGeneratorService extends Service {
         changelog += this._formatPullRequest(
           pr,
           repo,
-          this.config.get("includePrBody", true) ? pr.body : null
+          this.config.get("includePrBody", true) ? pr.body : null,
         );
       }
     }

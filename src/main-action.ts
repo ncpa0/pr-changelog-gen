@@ -29,61 +29,61 @@ export * from "./arguments";
 
 export class MainAction extends Service {
   @Inject(() => ArgSloppy)
-  private declare sloppy: InstanceType<typeof ArgSloppy>;
+  declare private sloppy: InstanceType<typeof ArgSloppy>;
 
   @Inject(() => ArgTrace)
-  private declare trace: InstanceType<typeof ArgTrace>;
+  declare private trace: InstanceType<typeof ArgTrace>;
 
   @Inject(() => ArgVersion)
-  private declare version: InstanceType<typeof ArgVersion>;
+  declare private version: InstanceType<typeof ArgVersion>;
 
   @Inject(() => ArgIncludePrDescription)
-  private declare includePrDescription: InstanceType<typeof ArgIncludePrDescription>;
+  declare private includePrDescription: InstanceType<typeof ArgIncludePrDescription>;
 
   @Inject(() => ArgPrTitleMatcher)
-  private declare prTitleMatcher: InstanceType<typeof ArgPrTitleMatcher>;
+  declare private prTitleMatcher: InstanceType<typeof ArgPrTitleMatcher>;
 
   @Inject(() => ArgDateFormat)
-  private declare dateFormat: InstanceType<typeof ArgDateFormat>;
+  declare private dateFormat: InstanceType<typeof ArgDateFormat>;
 
   @Inject(() => ArgValidLabels)
-  private declare validLabels: InstanceType<typeof ArgValidLabels>;
+  declare private validLabels: InstanceType<typeof ArgValidLabels>;
 
   @Inject(() => ArgOutputFile)
-  private declare outputFile: InstanceType<typeof ArgOutputFile>;
+  declare private outputFile: InstanceType<typeof ArgOutputFile>;
 
   @Inject(() => ArgOnlySince)
-  private declare onlySince: InstanceType<typeof ArgOnlySince>;
+  declare private onlySince: InstanceType<typeof ArgOnlySince>;
 
   @Inject(() => ArgGroupByLabels)
-  private declare groupByLabels: InstanceType<typeof ArgGroupByLabels>;
+  declare private groupByLabels: InstanceType<typeof ArgGroupByLabels>;
 
   @Inject(() => ArgGroupByMatchers)
-  private declare groupByMatchers: InstanceType<typeof ArgGroupByMatchers>;
+  declare private groupByMatchers: InstanceType<typeof ArgGroupByMatchers>;
 
   @Inject(() => ArgOutputToStdout)
-  private declare outputToStdout: InstanceType<typeof ArgOutputToStdout>;
+  declare private outputToStdout: InstanceType<typeof ArgOutputToStdout>;
 
   @Inject(() => ArgNoOutput)
-  private declare noOutput: InstanceType<typeof ArgNoOutput>;
+  declare private noOutput: InstanceType<typeof ArgNoOutput>;
 
   @Inject(() => ArgExcludePrs)
-  private declare excludePrs: InstanceType<typeof ArgExcludePrs>;
+  declare private excludePrs: InstanceType<typeof ArgExcludePrs>;
 
   @Inject(() => ArgExcludePattern)
-  private declare excludePatterns: InstanceType<typeof ArgExcludePattern>;
+  declare private excludePatterns: InstanceType<typeof ArgExcludePattern>;
 
   @Inject(() => Octokit)
-  private declare githubClient: InstanceType<typeof Octokit>;
+  declare private githubClient: InstanceType<typeof Octokit>;
 
   @Inject(() => ConfigLoader)
-  private declare configLoader: ConfigLoader;
+  declare private configLoader: ConfigLoader;
 
   @Inject(() => EnvvarReader)
-  private declare envvarReader: EnvvarReader;
+  declare private envvarReader: EnvvarReader;
 
   @Inject(() => MainRunner)
-  private declare runner: MainRunner;
+  declare private runner: MainRunner;
 
   private isSpawnedFromCli = false;
 
@@ -138,13 +138,13 @@ export class MainAction extends Service {
 
         return await cli.run(
           this.version.value,
-          await this.configLoader.loadPackageJson()
+          await this.configLoader.loadPackageJson(),
         );
       },
       {
         trace: this.trace.value,
         isSpawnedFromCli: this.isSpawnedFromCli,
-      }
+      },
     );
   }
 }

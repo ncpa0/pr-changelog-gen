@@ -1,7 +1,7 @@
 import { ServiceMetadata } from "./metadata";
 
 export interface Constructor {
-  new (): any;
+  new(): any;
 }
 
 /**

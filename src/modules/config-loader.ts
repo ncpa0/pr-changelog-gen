@@ -11,7 +11,7 @@ export class ConfigLoader {
     }
 
     this.packageJson = JSON.parse(
-      await fs.readFile(path.resolve(cwd, "package.json"), "utf8")
+      await fs.readFile(path.resolve(cwd, "package.json"), "utf8"),
     ) as PackageJson;
 
     return this.packageJson;

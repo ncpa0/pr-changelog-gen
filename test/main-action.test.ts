@@ -1,5 +1,5 @@
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi as jest } from "vitest";
 import { Octokit } from "@octokit/rest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi as jest } from "vitest";
 import {
   ArgDateFormat,
   ArgExcludePattern,
@@ -64,7 +64,7 @@ const factory = (
     cliServiceMock?: any;
     config?: Partial<Config>;
     envvars?: Record<string, any>;
-  } & LoggerMockParams = {}
+  } & LoggerMockParams = {},
 ) => {
   const {
     argMocks,
@@ -98,13 +98,13 @@ const factory = (
     [CliService, cliServiceMock ?? { run: cliRun }],
     [Octokit, githubClient],
     [Logger, logger],
-    ...argDeps
+    ...argDeps,
   ).setIsSpawnedFromCli(true);
 };
 
 const createCliForConfigTesting = async (
   config?: Partial<Config>,
-  argMocks?: Partial<Record<keyof typeof ALL_ARGS, string | number | boolean>>
+  argMocks?: Partial<Record<keyof typeof ALL_ARGS, string | number | boolean>>,
 ) => {
   let cli!: CliServiceMock;
 
@@ -159,7 +159,7 @@ describe("MainAction", () => {
           logError: onPrintError,
         });
         return action.run();
-      })()
+      })(),
     ).resolves.toBe(undefined);
 
     expect(onPrintError).not.toHaveBeenCalled();
@@ -228,7 +228,7 @@ describe("MainAction", () => {
       expect(programExitSpy).toHaveBeenCalledTimes(1);
 
       expect(onPrintError).toHaveBeenCalledWith(
-        "Invalid config property: 'config.dateFormat'"
+        "Invalid config property: 'config.dateFormat'",
       );
     });
 
@@ -250,7 +250,7 @@ describe("MainAction", () => {
       expect(programExitSpy).toHaveBeenCalledTimes(1);
 
       expect(onPrintError).toHaveBeenCalledWith(
-        "Invalid config property: 'config.sloppy'"
+        "Invalid config property: 'config.sloppy'",
       );
     });
 
@@ -272,7 +272,7 @@ describe("MainAction", () => {
       expect(programExitSpy).toHaveBeenCalledTimes(1);
 
       expect(onPrintError).toHaveBeenCalledWith(
-        "Invalid config property: 'config.prTitleMatcher'"
+        "Invalid config property: 'config.prTitleMatcher'",
       );
     });
   });

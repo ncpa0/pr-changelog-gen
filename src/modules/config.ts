@@ -28,7 +28,7 @@ export const ConfigSchema = Type.Record({
   noOutput: Type.Option(Type.Boolean),
   excludePrs: Type.Option(Type.Array(Type.String.Int, Type.Int)),
   excludePatterns: Type.Option(
-    Type.OneOf(Type.String, Type.Array(Type.String, RegexType))
+    Type.OneOf(Type.String, Type.Array(Type.String, RegexType)),
   ),
 });
 
@@ -64,7 +64,7 @@ export class ConfigFacade {
     const result = validateConfig(config);
     if (!result.success) {
       throw new Error(
-        `Invalid config property: 'config.${result.error.fieldPath.replace("$.", "")}'`
+        `Invalid config property: 'config.${result.error.fieldPath.replace("$.", "")}'`,
       );
     }
   }
@@ -88,7 +88,7 @@ export class ConfigFacade {
   get<K extends keyof Config>(key: K): Config[K];
   get<K extends keyof Config>(
     key: K,
-    defaultValue: Defined<Config[K]>
+    defaultValue: Defined<Config[K]>,
   ): Defined<Config[K]>;
   get(key: keyof Config, defaultValue?: any): any {
     return this.config[key] ?? defaultValue;

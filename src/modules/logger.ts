@@ -1,11 +1,11 @@
-import { Output, html } from "termx-markup";
+import { html, Output } from "termx-markup";
 import { Inject } from "../utils/dependency-injector/inject";
 import { Service } from "../utils/dependency-injector/service";
 import { ConfigFacade } from "./config";
 
 export class Logger extends Service {
   @Inject(() => ConfigFacade)
-  private declare config: ConfigFacade;
+  declare private config: ConfigFacade;
 
   private stdout = new Output((v) => process.stdout.write(v));
   private stderr = new Output((v) => process.stderr.write(v));
@@ -41,7 +41,7 @@ export class Logger extends Service {
           </span>
           ${msg}
         </span>
-      `
+      `,
     );
   }
 
@@ -55,7 +55,7 @@ export class Logger extends Service {
           </span>
           ${msg}
         </span>
-      `
+      `,
     );
   }
 }

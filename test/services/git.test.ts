@@ -13,7 +13,7 @@ class GS extends GitService {
 
 function createGitServiceWithDefaultRemoteAlias(
   { status = "", revParse = "master", revList = "" } = {},
-  git = jest.fn<(a: string[]) => Promise<string>>()
+  git = jest.fn<(a: string[]) => Promise<string>>(),
 ) {
   git.mockImplementation(async (arg: string[]) => {
     const cmd = arg.join(" ");
@@ -49,7 +49,7 @@ describe("GitService", () => {
       const git = createGitServiceWithDefaultRemoteAlias({ status: "M foobar\n" });
 
       await expect(git.ensureCleanLocalGitState(githubRepo)).rejects.toThrow(
-        expect.objectContaining({ message: "Local copy is not clean" })
+        expect.objectContaining({ message: "Local copy is not clean" }),
       );
     });
 
@@ -57,27 +57,25 @@ describe("GitService", () => {
       const git = createGitServiceWithDefaultRemoteAlias({ revParse: "feature-foo\n" });
 
       await expect(git.ensureCleanLocalGitState(githubRepo)).rejects.toThrow(
-        expect.objectContaining({ message: "Not on master branch" })
+        expect.objectContaining({ message: "Not on master branch" }),
       );
     });
 
     it("rejects if the local branch is ahead of the remote", async () => {
       const git = createGitServiceWithDefaultRemoteAlias({ revList: "<commit-sha1\n" });
-      const expectedMessage =
-        "Local git master branch is 1 commits ahead and 0 commits behind of origin/master";
+      const expectedMessage = "Local git master branch is 1 commits ahead and 0 commits behind of origin/master";
 
       await expect(git.ensureCleanLocalGitState(githubRepo)).rejects.toThrow(
-        expect.objectContaining({ message: expectedMessage })
+        expect.objectContaining({ message: expectedMessage }),
       );
     });
 
     it("rejects if the local branch is behind the remote", async () => {
       const git = createGitServiceWithDefaultRemoteAlias({ revList: ">commit-sha1\n" });
-      const expectedMessage =
-        "Local git master branch is 0 commits ahead and 1 commits behind of origin/master";
+      const expectedMessage = "Local git master branch is 0 commits ahead and 1 commits behind of origin/master";
 
       await expect(git.ensureCleanLocalGitState(githubRepo)).rejects.toThrow(
-        expect.objectContaining({ message: expectedMessage })
+        expect.objectContaining({ message: expectedMessage }),
       );
     });
 
@@ -104,7 +102,7 @@ describe("GitService", () => {
       const git = createGitService();
 
       await expect(git._findRemoteAlias(githubRepo)).rejects.toThrow(
-        expect.objectContaining({ message: expectedErrorMessage })
+        expect.objectContaining({ message: expectedErrorMessage }),
       );
     });
 

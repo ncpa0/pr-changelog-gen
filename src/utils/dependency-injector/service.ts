@@ -3,9 +3,9 @@ import { ServiceMetadata } from "./metadata";
 
 export interface Injectable {
   __init_service?: (
-    dependencies: Dependencies | Map<Injectable, DependencyOverride>
+    dependencies: Dependencies | Map<Injectable, DependencyOverride>,
   ) => any;
-  new (): any;
+  new(): any;
 }
 export type DependencyOverride = Injectable | object;
 
@@ -20,7 +20,7 @@ function isConstructor(obj: object): obj is Injectable {
 
 function initializeDependency(
   dependency: any,
-  overrides: Dependencies | Map<Injectable, DependencyOverride>
+  overrides: Dependencies | Map<Injectable, DependencyOverride>,
 ) {
   if (isConstructor(dependency)) {
     if (dependency.__init_service) {
@@ -36,7 +36,7 @@ function initializeDependency(
 export class Service {
   private static __init_service<T extends typeof Service>(
     this: T,
-    dependencies: Dependencies | Map<Constructor, DependencyOverride>
+    dependencies: Dependencies | Map<Constructor, DependencyOverride>,
   ): InstanceType<T> {
     const orgClassName = this.name;
     const dependenciesOverrides = new Map(dependencies);
@@ -64,7 +64,7 @@ export class Service {
    */
   static setDefaultDependency<T extends Injectable>(
     dependencyConstructor: T,
-    instance: InstanceType<T> | T
+    instance: InstanceType<T> | T,
   ) {
     defaultDependencies.set(dependencyConstructor, instance);
   }
@@ -81,8 +81,8 @@ export class Service {
     return this.__init_service(dependencies);
   }
 
-  protected declare __reflectProto?: () => object;
-  protected declare __dependenciesOverrides?: () => Map<Constructor, DependencyOverride>;
+  declare protected __reflectProto?: () => object;
+  declare protected __dependenciesOverrides?: () => Map<Constructor, DependencyOverride>;
 
   constructor() {
     this.__initializeDependencies();
@@ -95,12 +95,12 @@ export class Service {
 
     const keys = Reflect.getMetadata(ServiceMetadata.Keys, proto);
 
-    if (keys)
+    if (keys) {
       for (const key of keys) {
         const getDefault: () => Injectable = Reflect.getMetadata(
           ServiceMetadata.Inject,
           proto,
-          key
+          key,
         );
         const defaultDependency = getDefault();
 
@@ -124,6 +124,7 @@ export class Service {
           }
         }
       }
+    }
 
     return this;
   }

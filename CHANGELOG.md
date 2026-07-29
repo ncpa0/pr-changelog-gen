@@ -46,12 +46,12 @@
   **Example**
 
   ```ts
-  import { MainAction, argument } from "pr-changelog-gen";
+  import { argument, MainAction } from "pr-changelog-gen";
 
   const action = MainAction.init(
     argument("-v", "1.0.0"),
     argument("-c", "2023-01-01"),
-    argument("--sloppy", true)
+    argument("--sloppy", true),
   );
 
   await action.run();
@@ -107,14 +107,14 @@
 
   ```ts
   import {
-    MainAction,
-    ArgVersion,
     ArgTrace,
+    ArgVersion,
+    MainAction,
   } from "pr-changelog-gen/dist/esm/main-action.mjs";
 
   const action = MainAction.init(
     [ArgVersion, { value: "1.0.0", isSet: true }],
-    [ArgTrace, { value: true, isSet: true }]
+    [ArgTrace, { value: true, isSet: true }],
   );
 
   const result = actions.run(); // equivalent to `yarn pr-changelog-gen -v 1.0.0 --trace`

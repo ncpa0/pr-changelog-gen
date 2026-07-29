@@ -1,5 +1,5 @@
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi as jest } from "vitest";
 import { Octokit } from "@octokit/rest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi as jest } from "vitest";
 import {
   ArgDateFormat,
   ArgExcludePattern,
@@ -104,7 +104,7 @@ const defaultPullResponses = [
     state: "closed",
     created_at: "2023-02-01T12:00:00",
     updated_at: "2023-02-01T12:00:00",
-    body: 'fixed a bug which ocurred when doing something like:\n\n```ts\n  foo("bar");\n```\n',
+    body: "fixed a bug which ocurred when doing something like:\n\n```ts\n  foo(\"bar\");\n```\n",
     labels: ["fixes", "bugfixes", "bugs"] as string[],
     merged_at: "2023-02-10T12:30:00",
   },
@@ -216,7 +216,7 @@ const factory = (
     filesystem?: any;
     config?: Partial<Config>;
     envvars?: Record<string, any>;
-  } & LoggerMockParams = {}
+  } & LoggerMockParams = {},
 ) => {
   const {
     argMocks,
@@ -252,7 +252,7 @@ const factory = (
     [Git, gitClient],
     [Filesystem, filesystem],
     [Logger, logger],
-    ...argDeps
+    ...argDeps,
   ).setIsSpawnedFromCli(true);
 };
 
@@ -314,7 +314,7 @@ describe("integration", () => {
       "  fixed a bug which ocurred when doing something like:",
       "  ",
       "  ```ts",
-      '    foo("bar");',
+      "    foo(\"bar\");",
       "  ```",
       "  ",
       "",
@@ -331,7 +331,7 @@ describe("integration", () => {
 
     expect(FilesystemMock.prepend).toHaveBeenCalledWith(
       "/home/user/Documents/repo/CHANGELOG.md",
-      expectedChangelog
+      expectedChangelog,
     );
   });
 
@@ -355,7 +355,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/docs/history.md",
-          expect.any(String)
+          expect.any(String),
         );
       });
 
@@ -377,7 +377,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/projects/my-project/H.md",
-          expect.any(String)
+          expect.any(String),
         );
       });
     });
@@ -400,7 +400,7 @@ describe("integration", () => {
         expect(programExitSpy).not.toHaveBeenCalled();
 
         expect(FilesystemMock.prepend.mock.calls[0]![1]).toMatch(
-          /^## 2\.0\.2 \(2023-04-01T12:00:00\)/m
+          /^## 2\.0\.2 \(2023-04-01T12:00:00\)/m,
         );
       });
 
@@ -421,7 +421,7 @@ describe("integration", () => {
         expect(programExitSpy).not.toHaveBeenCalled();
 
         expect(FilesystemMock.prepend.mock.calls[0]![1]).toMatch(
-          /^## 2\.0\.2 \(2023-04-01\)/m
+          /^## 2\.0\.2 \(2023-04-01\)/m,
         );
       });
     });
@@ -463,7 +463,7 @@ describe("integration", () => {
           "  fixed a bug which ocurred when doing something like:",
           "  ",
           "  ```ts",
-          '    foo("bar");',
+          "    foo(\"bar\");",
           "  ```",
           "  ",
           "",
@@ -480,7 +480,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
 
@@ -519,7 +519,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
     });
@@ -565,7 +565,7 @@ describe("integration", () => {
           "  fixed a bug which ocurred when doing something like:",
           "  ",
           "  ```ts",
-          '    foo("bar");',
+          "    foo(\"bar\");",
           "  ```",
           "  ",
           "",
@@ -582,7 +582,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
 
@@ -618,7 +618,7 @@ describe("integration", () => {
           "  fixed a bug which ocurred when doing something like:",
           "  ",
           "  ```ts",
-          '    foo("bar");',
+          "    foo(\"bar\");",
           "  ```",
           "  ",
           "",
@@ -626,7 +626,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
     });
@@ -702,7 +702,7 @@ describe("integration", () => {
           expect(programExitSpy).toHaveBeenCalled();
 
           expect(onPrintError).toHaveBeenCalledWith(
-            "Local git master branch is 2 commits ahead and 0 commits behind of origin/master"
+            "Local git master branch is 2 commits ahead and 0 commits behind of origin/master",
           );
 
           expect(FilesystemMock.prepend).not.toHaveBeenCalled();
@@ -730,7 +730,7 @@ describe("integration", () => {
           expect(programExitSpy).toHaveBeenCalled();
 
           expect(onPrintError).toHaveBeenCalledWith(
-            "This local git repository doesn’t have a remote pointing to git://github.com/repoOwner/repoName.git"
+            "This local git repository doesn’t have a remote pointing to git://github.com/repoOwner/repoName.git",
           );
 
           expect(FilesystemMock.prepend).not.toHaveBeenCalled();
@@ -850,8 +850,7 @@ describe("integration", () => {
         expect(onPrintError).toHaveBeenCalled();
         expect(programExitSpy).toHaveBeenCalled();
 
-        const errStackRegexp =
-          /Error: version-number not specified\n(\s+at .+?\((\/.+?)+\.ts:\d+:\d+\)\n?)+/m;
+        const errStackRegexp = /Error: version-number not specified\n(\s+at .+?\((\/.+?)+\.ts:\d+:\d+\)\n?)+/m;
 
         expect(onPrintError).toHaveBeenCalledWith(expect.stringMatching(errStackRegexp));
 
@@ -896,7 +895,7 @@ describe("integration", () => {
           "  fixed a bug which ocurred when doing something like:",
           "  ",
           "  ```ts",
-          '    foo("bar");',
+          "    foo(\"bar\");",
           "  ```",
           "  ",
           "",
@@ -919,7 +918,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
 
@@ -959,7 +958,7 @@ describe("integration", () => {
           "  fixed a bug which ocurred when doing something like:",
           "  ",
           "  ```ts",
-          '    foo("bar");',
+          "    foo(\"bar\");",
           "  ```",
           "  ",
           "",
@@ -986,7 +985,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
     });
@@ -1033,7 +1032,7 @@ describe("integration", () => {
           "  fixed a bug which ocurred when doing something like:",
           "  ",
           "  ```ts",
-          '    foo("bar");',
+          "    foo(\"bar\");",
           "  ```",
           "  ",
           "",
@@ -1060,7 +1059,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
 
@@ -1091,7 +1090,7 @@ describe("integration", () => {
           "  fixed a bug which ocurred when doing something like:",
           "  ",
           "  ```ts",
-          '    foo("bar");',
+          "    foo(\"bar\");",
           "  ```",
           "  ",
           "",
@@ -1120,7 +1119,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
 
@@ -1151,7 +1150,7 @@ describe("integration", () => {
           "  fixed a bug which ocurred when doing something like:",
           "  ",
           "  ```ts",
-          '    foo("bar");',
+          "    foo(\"bar\");",
           "  ```",
           "  ",
           "",
@@ -1178,7 +1177,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
     });
@@ -1212,7 +1211,7 @@ describe("integration", () => {
           "  fixed a bug which ocurred when doing something like:",
           "  ",
           "  ```ts",
-          '    foo("bar");',
+          "    foo(\"bar\");",
           "  ```",
           "  ",
           "",
@@ -1233,7 +1232,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
     });
@@ -1261,7 +1260,7 @@ describe("integration", () => {
         expect(onWrite).toHaveBeenCalledTimes(1);
         expect(onWrite).toHaveBeenCalledWith(
           expect.stringMatching(/## 2\.0\.2 .+/),
-          expect.anything()
+          expect.anything(),
         );
       });
     });
@@ -1345,7 +1344,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
     });
@@ -1385,7 +1384,7 @@ describe("integration", () => {
           "  fixed a bug which ocurred when doing something like:",
           "  ",
           "  ```ts",
-          '    foo("bar");',
+          "    foo(\"bar\");",
           "  ```",
           "  ",
           "",
@@ -1402,7 +1401,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
 
@@ -1435,7 +1434,7 @@ describe("integration", () => {
           "  fixed a bug which ocurred when doing something like:",
           "  ",
           "  ```ts",
-          '    foo("bar");',
+          "    foo(\"bar\");",
           "  ```",
           "  ",
           "",
@@ -1452,7 +1451,7 @@ describe("integration", () => {
 
         expect(FilesystemMock.prepend).toHaveBeenCalledWith(
           "/home/user/Documents/repo/CHANGELOG.md",
-          expectedChangelog
+          expectedChangelog,
         );
       });
     });

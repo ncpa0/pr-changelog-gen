@@ -6,7 +6,7 @@ import type { Repo } from "../utils/repo";
 
 export class GitService extends Service {
   @Inject(() => Git)
-  private declare git: Git;
+  declare private git: Git;
 
   _isSameGitUrl(gitUrlA: string, gitUrlB: string) {
     const parsedUrlA = parseGitUrl(gitUrlA);
@@ -35,12 +35,12 @@ export class GitService extends Service {
     });
 
     const matchedRemote = remotes.find(
-      (remote) => remote.url && this._isSameGitUrl(gitRemote, remote.url)
+      (remote) => remote.url && this._isSameGitUrl(gitRemote, remote.url),
     );
 
     if (!matchedRemote || !matchedRemote.alias) {
       throw new Error(
-        `This local git repository doesn’t have a remote pointing to ${gitRemote}`
+        `This local git repository doesn’t have a remote pointing to ${gitRemote}`,
       );
     }
 
@@ -89,7 +89,8 @@ export class GitService extends Service {
     });
 
     if (commitsAhead > 0 || commitsBehind > 0) {
-      const errorMessage = `Local git master branch is ${commitsAhead} commits ahead and ${commitsBehind} commits behind of ${remoteBranch}`;
+      const errorMessage =
+        `Local git master branch is ${commitsAhead} commits ahead and ${commitsBehind} commits behind of ${remoteBranch}`;
 
       throw new Error(errorMessage);
     }

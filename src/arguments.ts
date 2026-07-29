@@ -4,8 +4,7 @@ export const ArgIncludePrDescription = Argument.define({
   keyword: "--include-pr-description",
   flagChar: "-n",
   dataType: "boolean",
-  description:
-    "Include the description of each pull request in the changelog. Default: true.",
+  description: "Include the description of each pull request in the changelog. Default: true.",
   default: true,
   require: true,
 });
@@ -82,8 +81,7 @@ export const ArgVersion = Argument.define({
   keyword: "--target-version",
   flagChar: "-v",
   dataType: "string",
-  description:
-    "[Required] The version number of the release the changelog is being created for.",
+  description: "[Required] The version number of the release the changelog is being created for.",
   require: true,
 });
 
@@ -91,16 +89,14 @@ export const ArgOutputToStdout = Argument.define({
   keyword: "--output-to-stdout",
   flagChar: "-u",
   dataType: "boolean",
-  description:
-    "Output the changelog to stdout instead of writing to a file. Default: false.",
+  description: "Output the changelog to stdout instead of writing to a file. Default: false.",
 });
 
 export const ArgNoOutput = Argument.define({
   keyword: "--no-output",
   flagChar: "-q",
   dataType: "boolean",
-  description:
-    "When enabled generated changelog will not be written to any file or printed to stdout. Default: false.",
+  description: "When enabled generated changelog will not be written to any file or printed to stdout. Default: false.",
 });
 
 export const ArgExcludePrs = Argument.define({

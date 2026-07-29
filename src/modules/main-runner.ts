@@ -4,7 +4,7 @@ import { Logger } from "./logger";
 export class MainRunner extends Service {
   async run<R>(
     action: () => Promise<R>,
-    options: { trace?: boolean; isSpawnedFromCli: boolean }
+    options: { trace?: boolean; isSpawnedFromCli: boolean },
   ): Promise<R> {
     try {
       return await action();

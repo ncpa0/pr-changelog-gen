@@ -14,25 +14,25 @@ import { PullRequestResolverService } from "./pull-request-resolver";
 
 export class CliService extends Service {
   @Inject(() => ConfigFacade)
-  private declare config: ConfigFacade;
+  declare private config: ConfigFacade;
 
   @Inject(() => ChangelogGeneratorService)
-  private declare changelog: ChangelogGeneratorService;
+  declare private changelog: ChangelogGeneratorService;
 
   @Inject(() => PullRequestResolverService)
-  private declare pr: PullRequestResolverService;
+  declare private pr: PullRequestResolverService;
 
   @Inject(() => GithubUrlResolver)
-  private declare githubUrlResolver: GithubUrlResolver;
+  declare private githubUrlResolver: GithubUrlResolver;
 
   @Inject(() => Filesystem)
-  private declare filesystem: Filesystem;
+  declare private filesystem: Filesystem;
 
   @Inject(() => GitService)
-  private declare gitService: GitService;
+  declare private gitService: GitService;
 
   @Inject(() => Logger)
-  private declare log: Logger;
+  declare private log: Logger;
 
   _stripTrailingEmptyLine(text: string) {
     if (text.endsWith("\n\n")) {
@@ -65,12 +65,9 @@ export class CliService extends Service {
     const excluded = this.config.get("excludePrs", []).map(Number);
     const excludedPatterns = this.config.get("excludePatterns", []);
 
-    const plist =
-      typeof excludedPatterns === "string" ? [excludedPatterns] : excludedPatterns;
+    const plist = typeof excludedPatterns === "string" ? [excludedPatterns] : excludedPatterns;
 
-    const regexList = plist.map((p) =>
-      typeof p === "string" ? new RegExp(p) : new RegExp(p.regexp, p.flags)
-    );
+    const regexList = plist.map((p) => typeof p === "string" ? new RegExp(p) : new RegExp(p.regexp, p.flags));
 
     return prs
       .filter((p) => !excluded.includes(p.id))
@@ -91,7 +88,7 @@ export class CliService extends Service {
     const changelog = await this.changelog.create(
       newVersionNumber,
       pullRequests,
-      githubRepo
+      githubRepo,
     );
 
     return { created: true, changelog: this._stripTrailingEmptyLine(changelog) };
@@ -108,7 +105,7 @@ export class CliService extends Service {
 
     const { changelog, created } = await this._generateChangelog(
       githubRepo,
-      newVersionNumber
+      newVersionNumber,
     );
 
     if (!created) {

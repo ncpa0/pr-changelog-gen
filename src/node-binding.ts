@@ -84,10 +84,9 @@ type TypeNameToType<T extends TypeName> = {
 }[T];
 
 type ArgKey = (typeof ARGS)[number][0];
-type ArgType<A extends ArgKey> = ArgForKey<A> extends new () => Argument<infer U, any>
-  ? U extends TypeName
-    ? TypeNameToType<U>
-    : never
+type ArgType<A extends ArgKey> = ArgForKey<A> extends new() => Argument<infer U, any>
+  ? U extends TypeName ? TypeNameToType<U>
+  : never
   : never;
 
 // @ts-expect-error
@@ -95,7 +94,7 @@ const ARG_MAP = new Map(ARGS);
 
 export const argument = <A extends ArgKey>(
   argName: A,
-  value: ArgType<A>
+  value: ArgType<A>,
 ): [Constructor, DependencyOverride] => {
   const ArgConstructor = ARG_MAP.get(argName);
 
@@ -116,7 +115,7 @@ export const argument = <A extends ArgKey>(
 export const arg = argument;
 
 const defaultBindArg = <A extends ArgKey>(
-  argName: A
+  argName: A,
 ): [Constructor, DependencyOverride] => {
   const ArgConstructor = ARG_MAP.get(argName);
 

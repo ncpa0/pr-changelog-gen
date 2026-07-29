@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { ConfigFacade } from "../../src/modules/config";
 import { DateResolver } from "../../src/modules/date-resolver";
 import { ChangelogGeneratorService } from "../../src/services/changelog-generator";
+import type { PullRequest } from "../../src/shared-types";
 import { Repo } from "../../src/utils/repo";
 import { mockConfig } from "../shared";
-import type { PullRequest } from "../../src/shared-types";
 
 const repository = new Repo("foo", "bar");
 
@@ -18,7 +18,7 @@ const factory = (deps: { getCurrentDate?: () => Date; config?: ConfigFacade }) =
         getCurrentDate,
       },
     ],
-    [ConfigFacade, config]
+    [ConfigFacade, config],
   );
 };
 

@@ -6,10 +6,10 @@ import { ChangelogGeneratorService } from "../../src/services/changelog-generato
 import { CliService } from "../../src/services/cli";
 import { GitService } from "../../src/services/git";
 import { PullRequestResolverService } from "../../src/services/pull-request-resolver";
+import type { PullRequest, SemverNumber } from "../../src/shared-types";
 import { Repo } from "../../src/utils/repo";
 import type { LoggerMockParams } from "../shared";
 import { LoggerMock, mockConfig } from "../shared";
-import type { PullRequest, SemverNumber } from "../../src/shared-types";
 
 export type CliFactoryParams = {
   ensureCleanLocalGitState: (githubRepo: Repo) => Promise<void>;
@@ -17,7 +17,7 @@ export type CliFactoryParams = {
   createChangelog: (
     newVersionNumber: SemverNumber,
     pullRequests: Array<PullRequest>,
-    githubRepo: Repo
+    githubRepo: Repo,
   ) => Promise<string>;
   prependFile: (filePath: string, content: string) => Promise<void>;
   config: ConfigFacade;
@@ -41,7 +41,7 @@ function createCli(params: Partial<CliFactoryParams> = {}) {
     [PullRequestResolverService, { getMerged: params.getMergedPullRequests }],
     [Filesystem, { prepend: params.prependFile }],
     [GitService, { ensureCleanLocalGitState: params.ensureCleanLocalGitState }],
-    [Logger, loggerMock]
+    [Logger, loggerMock],
   );
 }
 
@@ -54,7 +54,7 @@ describe("CliService", () => {
     const cli = createCli();
 
     await expect(() => cli.run(undefined, packageInfo)).rejects.toThrow(
-      expect.objectContaining({ message: "version-number not specified" })
+      expect.objectContaining({ message: "version-number not specified" }),
     );
   });
 
@@ -62,7 +62,7 @@ describe("CliService", () => {
     const cli = createCli();
 
     await expect(() => cli.run("a.b.c", packageInfo)).rejects.toThrow(
-      expect.objectContaining({ message: "version-number is invalid" })
+      expect.objectContaining({ message: "version-number is invalid" }),
     );
   });
 
@@ -73,7 +73,7 @@ describe("CliService", () => {
     const cli = createCli({ ensureCleanLocalGitState });
 
     await expect(() => cli.run("1.0.0", packageInfo)).rejects.toThrow(
-      expect.objectContaining({ message: "Local copy is not clean" })
+      expect.objectContaining({ message: "Local copy is not clean" }),
     );
   });
 
@@ -125,7 +125,7 @@ describe("CliService", () => {
     expect(createChangelog).toHaveBeenCalledWith(
       "1.0.0",
       expect.any(Array),
-      expectedGithubRepo
+      expectedGithubRepo,
     );
 
     expect(prependFile).toHaveBeenCalledTimes(1);
@@ -134,7 +134,7 @@ describe("CliService", () => {
 
   it("strips trailing empty lines from the generated changelog", async () => {
     const createChangelog = jest.fn(
-      async () => "generated\nchangelog\nwith\n\na\nlot\n\nof\nempty\nlines\n\n"
+      async () => "generated\nchangelog\nwith\n\na\nlot\n\nof\nempty\nlines\n\n",
     );
     const prependFile = jest.fn(async () => {});
 
@@ -145,7 +145,7 @@ describe("CliService", () => {
     expect(prependFile).toHaveBeenCalledTimes(1);
     expect(prependFile).toHaveBeenCalledWith(
       "/foo/CHANGELOG.md",
-      "generated\nchangelog\nwith\n\na\nlot\n\nof\nempty\nlines\n"
+      "generated\nchangelog\nwith\n\na\nlot\n\nof\nempty\nlines\n",
     );
   });
 

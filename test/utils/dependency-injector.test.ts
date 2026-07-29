@@ -92,7 +92,7 @@ describe("Dependency Injection", () => {
         baz() {
           return "baz-replacement";
         }
-      }
+      },
     );
 
     const test = new TestService();
@@ -222,7 +222,7 @@ describe("Dependency Injection", () => {
           const nestedService = this.spawnService(
             TestService2,
             [Foo, { foo: () => "1234" }],
-            [Bar, { bar: () => "abcd" }]
+            [Bar, { bar: () => "abcd" }],
           );
           return nestedService.runDeps();
         }

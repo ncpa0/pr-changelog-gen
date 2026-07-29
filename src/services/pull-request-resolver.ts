@@ -23,13 +23,13 @@ export type PullResponse = {
 
 export class PullRequestResolverService extends Service {
   @Inject(() => Git)
-  private declare git: Git;
+  declare private git: Git;
 
   @Inject(() => Octokit)
-  private declare githubClient: Octokit;
+  declare private githubClient: Octokit;
 
   @Inject(() => ConfigFacade)
-  private declare config: ConfigFacade;
+  declare private config: ConfigFacade;
 
   _parseTagDateTime(gitTagInfo: string, tagName: string) {
     const tagLineRegexp = new RegExp(`tag:\\s+?${tagName}[\\s,)]`);
@@ -65,7 +65,7 @@ export class PullRequestResolverService extends Service {
     const result = await this.git.run(["tag", "--list"]);
     const tags = result.split("\n");
     const versionTags = tags.filter(
-      (tag) => semver.valid(tag) && !semver.prerelease(tag)
+      (tag) => semver.valid(tag) && !semver.prerelease(tag),
     );
     const orderedVersionTags = versionTags.sort(semver.compare);
 
@@ -81,7 +81,7 @@ export class PullRequestResolverService extends Service {
         sort: "updated",
         direction: "desc",
         per_page: 100,
-      }
+      },
     );
 
     const sinceDateTime = this.config.get("onlySince");
@@ -104,9 +104,9 @@ export class PullRequestResolverService extends Service {
       return issues.data
         .filter((issue) => {
           return (
-            issue.state === "closed" &&
-            issue.merged_at &&
-            new Date(issue.merged_at) > dateTime
+            issue.state === "closed"
+            && issue.merged_at
+            && new Date(issue.merged_at) > dateTime
           );
         })
         .map((issue) => {
