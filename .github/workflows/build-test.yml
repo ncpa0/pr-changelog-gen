@@ -23,6 +23,6 @@ jobs:
       - name: Install dependencies
         run: ./.yarn/yarn.cjs install --immutable --mode=skip-build
       - name: Lint and Tests
-        run: ./.yarn/yarn.cjs yarn git-hook-tasks pre-push
+        run: ./.yarn/yarn.cjs git-hook-tasks pre-push
       - name: Attempt Build
         run: ./.yarn/yarn.cjs build
