@@ -1,3 +1,11 @@
+## 1.1.4 (July 29, 2026)
+
+### Bug Fixes
+
+- #### fix: git tag date time parsing ([#91](https://github.com/ncpa0/pr-changelog-gen/pull/91))
+
+  git tag parsing could sometimes fail due to too strict formatting expectations assumed by the parser
+
 ## 1.1.1 (May 29, 2023)
 
 ### Bug Fixes
