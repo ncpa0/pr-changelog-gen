@@ -1,21 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ESNext" ,
+    "target": "ESNext",
     "rootDir": "./src",
-    "outDir": "./dist",                               /* Specify what JSX code is generated. */
+    "outDir": "./dist" /* Specify what JSX code is generated. */,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true ,
-    "module": "ESNext" ,                                 /* Specify the root folder within your source files. */
-    "moduleResolution": "node" ,
-    "resolveJsonModule": true ,
-    "downlevelIteration": true ,
-    "esModuleInterop": true ,
-    "forceConsistentCasingInFileNames": true ,
+    "emitDecoratorMetadata": true,
+    "module": "ESNext" /* Specify the root folder within your source files. */,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "noImplicitAny": true ,
-    "strictNullChecks": true ,                           /* Ensure 'use strict' is always emitted. */
+    "noImplicitAny": true,
+    "strictNullChecks": true /* Ensure 'use strict' is always emitted. */,
     "noUnusedLocals": true,
-    "noUncheckedIndexedAccess": true ,
+    "noUncheckedIndexedAccess": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
   },
