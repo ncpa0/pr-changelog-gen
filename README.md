@@ -31,8 +31,8 @@
     - [-l --valid-labels](#-l---valid-labels)
     - [-o --output-file](#-o---output-file)
     - [-c --only-since](#-c---only-since)
-    - [-gl --group-by-labels](#-gl---group-by-labels)
-    - [-gm --group-by-matchers](#-gm---group-by-matchers)
+    - [-g --group-by-labels](#-g---group-by-labels)
+    - [-m --group-by-matchers](#-m---group-by-matchers)
     - [-q --no-output](#-q---no-output)
     - [-u --output-to-stdout](#-u---output-to-stdout)
     - [-s --sloppy](#-s---sloppy)
@@ -273,13 +273,13 @@ The path to the changelog file to which the output should be written. If the fil
 
 When enabled this option will include PRs that have been merged since the given date. The date can be specified as a Unix Timestamp or an ISO 8601 date/datetime string.
 
-#### -gl --group-by-labels
+#### -g --group-by-labels
 
 ##### Default: `false`
 
 When enabled this option will group PRs in the changelog by their labels. If a PR has multiple labels the label specified first in the `valid-labels` option will be used.
 
-#### -gm --group-by-matchers
+#### -g --group-by-matchers
 
 ##### Default: `true`
 
