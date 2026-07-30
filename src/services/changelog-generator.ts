@@ -26,10 +26,10 @@ type PrGroup = {
 };
 
 export class ChangelogGeneratorService extends Service {
-  @Inject(() => DateResolver)
+  @Inject(DateResolver)
   declare private dateResolver: DateResolver;
 
-  @Inject(() => ConfigFacade)
+  @Inject(ConfigFacade)
   declare private config: ConfigFacade;
 
   _formatLinkToPullRequest(pullRequestId: string | number, repo: Repo) {

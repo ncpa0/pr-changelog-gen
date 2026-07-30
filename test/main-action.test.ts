@@ -92,14 +92,19 @@ const factory = (
 
   const logger = new LoggerMock(params);
 
-  return MainAction.init(
-    [ConfigLoader, configLoaderMock],
-    [EnvvarReader, envvarReaderMock],
-    [CliService, cliServiceMock ?? { run: cliRun }],
-    [Octokit, githubClient],
-    [Logger, logger],
-    ...argDeps,
-  ).setIsSpawnedFromCli(true);
+  return MainAction.new(
+    {
+      args: [true, {} as any],
+      deps: [
+        [ConfigLoader, configLoaderMock],
+        [EnvvarReader, envvarReaderMock],
+        [CliService, cliServiceMock ?? { run: cliRun }],
+        [Octokit, githubClient],
+        [Logger, logger],
+        ...argDeps,
+      ],
+    },
+  );
 };
 
 const createCliForConfigTesting = async (
@@ -109,7 +114,7 @@ const createCliForConfigTesting = async (
   let cli!: CliServiceMock;
 
   class CliServiceMock extends Service {
-    @Inject(() => ConfigFacade)
+    @Inject(ConfigFacade)
     declare config: ConfigFacade;
 
     constructor() {

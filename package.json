@@ -24,7 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "@octokit/rest": "^22.0.1",
-    "clify": "ncpa0cpl/clify.js#0.0.4",
+    "clify.js": "^1.0.2",
     "date-fns": "^4.4.0",
     "dilswer": "^3.2.1",
     "git-url-parse": "^16.1.0",
@@ -34,7 +34,7 @@
     "termx-markup": "^2.1.6"
   },
   "devDependencies": {
-    "@ncpa0cpl/nodepack": "^2.4.1",
+    "@ncpa0cpl/nodepack": "^2.4.2",
     "@types/git-url-parse": "^16.0.2",
     "@types/node": "^26.1.2",
     "@types/parse-github-repo-url": "^1.4.2",

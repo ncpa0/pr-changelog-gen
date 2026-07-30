@@ -23,10 +23,10 @@ class Baz {
 describe("Dependency Injection", () => {
   it("should inject dependencies defined in decorators", () => {
     class TestService extends Service {
-      @Inject(() => Foo)
+      @Inject(Foo)
       declare foo: Foo;
 
-      @Inject(() => Bar)
+      @Inject(Bar)
       declare bar: Bar;
 
       runDeps() {
@@ -41,10 +41,10 @@ describe("Dependency Injection", () => {
 
   it("should override the default dependencies when provided to init()", () => {
     class TestService extends Service {
-      @Inject(() => Foo)
+      @Inject(Foo)
       declare foo: Foo;
 
-      @Inject(() => Bar)
+      @Inject(Bar)
       declare bar: Bar;
 
       runDeps() {
@@ -58,7 +58,7 @@ describe("Dependency Injection", () => {
       }
     }
 
-    const test = TestService.init([Bar, BarReplacement]);
+    const test = TestService.new({ deps: [[Bar, BarReplacement]] });
 
     expect(test.runDeps()).toBe("foo,bar-replacement");
     expect(Object.getPrototypeOf(test).constructor.name).toEqual("TestService");
@@ -66,13 +66,13 @@ describe("Dependency Injection", () => {
 
   it("should provide default dependencies", () => {
     class TestService extends Service {
-      @Inject(() => Foo)
+      @Inject(Foo)
       declare foo: Foo;
 
-      @Inject(() => Bar)
+      @Inject(Bar)
       declare bar: Bar;
 
-      @Inject(() => Baz)
+      @Inject(Baz)
       declare baz: Baz;
 
       runDeps() {
@@ -102,10 +102,10 @@ describe("Dependency Injection", () => {
 
   it("should propagate dependencies to nested services", () => {
     class TestService extends Service {
-      @Inject(() => Foo)
+      @Inject(Foo)
       declare foo: Foo;
 
-      @Inject(() => Bar)
+      @Inject(Bar)
       declare bar: Bar;
 
       runDeps() {
@@ -114,7 +114,7 @@ describe("Dependency Injection", () => {
     }
 
     class TestService2 extends Service {
-      @Inject(() => TestService)
+      @Inject(TestService)
       declare testService: TestService;
 
       runDeps() {
@@ -123,7 +123,7 @@ describe("Dependency Injection", () => {
     }
 
     class TestService3 extends Service {
-      @Inject(() => TestService2)
+      @Inject(TestService2)
       declare testService2: TestService2;
 
       runDeps() {
@@ -131,14 +131,14 @@ describe("Dependency Injection", () => {
       }
     }
 
-    const test = TestService3.init([Bar, { bar: () => "not-a-bar" }]);
+    const test = TestService3.new({ deps: [[Bar, { bar: () => "not-a-bar" }]] });
 
     expect(test.runDeps()).toBe("foo,not-a-bar");
   });
 
   it("overriding dependency should affect the result of spawnService()", () => {
     class TestService extends Service {
-      @Inject(() => Foo)
+      @Inject(Foo)
       declare foo: Foo;
 
       runDeps() {
@@ -159,7 +159,7 @@ describe("Dependency Injection", () => {
       }
     }
 
-    const test = TestService2.init([TestService, TestServiceReplacement]);
+    const test = TestService2.new({ deps: [[TestService, TestServiceReplacement]] });
 
     expect(test.runDeps()).toBe("TestServiceReplacement");
   });
@@ -167,10 +167,10 @@ describe("Dependency Injection", () => {
   describe("spawnService()", () => {
     it("should propagate dependencies to nested services", () => {
       class TestService extends Service {
-        @Inject(() => Foo)
+        @Inject(Foo)
         declare foo: Foo;
 
-        @Inject(() => Bar)
+        @Inject(Bar)
         declare bar: Bar;
 
         runDeps() {
@@ -192,14 +192,14 @@ describe("Dependency Injection", () => {
         }
       }
 
-      const test = TestService3.init([Bar, { bar: () => "qux" }]);
+      const test = TestService3.new({ deps: [[Bar, { bar: () => "qux" }]] });
 
       expect(test.runDeps()).toBe("foo,qux");
     });
 
     it("should properly override given dependencies", () => {
       class TestService extends Service {
-        @Inject(() => Bar)
+        @Inject(Bar)
         declare bar: Bar;
 
         runDeps() {
@@ -208,7 +208,7 @@ describe("Dependency Injection", () => {
       }
 
       class TestService2 extends Service {
-        @Inject(() => Foo)
+        @Inject(Foo)
         declare foo: Foo;
 
         runDeps() {
@@ -221,14 +221,18 @@ describe("Dependency Injection", () => {
         runDeps() {
           const nestedService = this.spawnService(
             TestService2,
-            [Foo, { foo: () => "1234" }],
-            [Bar, { bar: () => "abcd" }],
+            {
+              overrides: [
+                [Foo, { foo: () => "1234" }],
+                [Bar, { bar: () => "abcd" }],
+              ],
+            },
           );
           return nestedService.runDeps();
         }
       }
 
-      const test = TestService3.init([Bar, { bar: () => "qux" }]);
+      const test = TestService3.new({ deps: [[Bar, { bar: () => "qux" }]] });
 
       expect(test.runDeps()).toBe("1234,abcd");
     });

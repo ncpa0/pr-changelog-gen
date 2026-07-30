@@ -13,25 +13,25 @@ import { GitService } from "./git";
 import { PullRequestResolverService } from "./pull-request-resolver";
 
 export class CliService extends Service {
-  @Inject(() => ConfigFacade)
+  @Inject(ConfigFacade)
   declare private config: ConfigFacade;
 
-  @Inject(() => ChangelogGeneratorService)
+  @Inject(ChangelogGeneratorService)
   declare private changelog: ChangelogGeneratorService;
 
-  @Inject(() => PullRequestResolverService)
+  @Inject(PullRequestResolverService)
   declare private pr: PullRequestResolverService;
 
-  @Inject(() => GithubUrlResolver)
+  @Inject(GithubUrlResolver)
   declare private githubUrlResolver: GithubUrlResolver;
 
-  @Inject(() => Filesystem)
+  @Inject(Filesystem)
   declare private filesystem: Filesystem;
 
-  @Inject(() => GitService)
+  @Inject(GitService)
   declare private gitService: GitService;
 
-  @Inject(() => Logger)
+  @Inject(Logger)
   declare private log: Logger;
 
   _stripTrailingEmptyLine(text: string) {

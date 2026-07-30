@@ -1,8 +1,9 @@
-import type { Constructor } from "./inject";
+import type { Constructor, Dependency } from "./inject";
 import { ServiceMetadata } from "./metadata";
 
 export interface Injectable {
   __init_service?: (
+    args: ConstructorArgs<any>,
     dependencies: Dependencies | Map<Injectable, DependencyOverride>,
   ) => any;
   new(): any;
@@ -10,6 +11,8 @@ export interface Injectable {
 export type DependencyOverride = Injectable | object;
 
 export type Dependencies = Array<[Constructor, DependencyOverride]>;
+
+export type ConstructorArgs<C> = C extends new(...args: infer T extends any[]) => any ? T : [];
 
 const defaultDependencies = new Map<Constructor, InstanceType<Injectable>>();
 
@@ -19,12 +22,19 @@ function isConstructor(obj: object): obj is Injectable {
 }
 
 function initializeDependency(
+  service: Service,
   dependency: any,
+  args: any[],
   overrides: Dependencies | Map<Injectable, DependencyOverride>,
+  initiator?: (C: any, parent: Service) => any,
 ) {
+  if (initiator != null) {
+    return initiator(dependency, service);
+  }
+
   if (isConstructor(dependency)) {
     if (dependency.__init_service) {
-      return dependency.__init_service(overrides);
+      return dependency.__init_service(args, overrides);
     } else {
       return new dependency();
     }
@@ -34,11 +44,12 @@ function initializeDependency(
 }
 
 export class Service {
-  private static __init_service<T extends typeof Service>(
+  private static __init_service<T extends new(...args: any) => any>(
     this: T,
+    args: ConstructorArgs<T>,
     dependencies: Dependencies | Map<Constructor, DependencyOverride>,
   ): InstanceType<T> {
-    const orgClassName = this.name;
+    const orgClassName = (this as any).name;
     const dependenciesOverrides = new Map(dependencies);
 
     const classes = {} as any;
@@ -54,7 +65,9 @@ export class Service {
 
     Object.defineProperty(classes[orgClassName], "name", { value: orgClassName });
 
-    return new classes[orgClassName]();
+    const instance = new classes[orgClassName](...args) as Service;
+    instance.__initializeDependenciesAfter();
+    return instance as any;
   }
 
   /**
@@ -74,21 +87,24 @@ export class Service {
    * dependents. When a dependency is not provided but is used by the Service, the
    * default one will be used.
    */
-  static init<T extends typeof Service>(
+  static new<T extends new(...args: any) => any>(
     this: T,
-    ...dependencies: Dependencies
+    initProps: {
+      args?: ConstructorArgs<T>;
+      deps?: Dependencies;
+    },
   ): InstanceType<T> {
-    return this.__init_service(dependencies);
+    return (this as any).__init_service(initProps.args ?? [], initProps.deps ?? []);
   }
 
   declare protected __reflectProto?: () => object;
   declare protected __dependenciesOverrides?: () => Map<Constructor, DependencyOverride>;
 
   constructor() {
-    this.__initializeDependencies();
+    this.__initializeDependenciesBefore();
   }
 
-  private __initializeDependencies() {
+  private __initializeDependenciesBefore() {
     const proto = this.__reflectProto?.() ?? Object.getPrototypeOf(this);
 
     const dependenciesOverrides = this.__dependenciesOverrides?.() ?? new Map();
@@ -97,29 +113,84 @@ export class Service {
 
     if (keys) {
       for (const key of keys) {
-        const getDefault: () => Injectable = Reflect.getMetadata(
-          ServiceMetadata.Inject,
+        const dependency: Dependency<Constructor> = Reflect.getMetadata(
+          ServiceMetadata.InjectBefore,
           proto,
           key,
         );
-        const defaultDependency = getDefault();
 
-        const override = dependenciesOverrides.get(defaultDependency);
+        if (!dependency) continue;
+
+        const override = dependenciesOverrides.get(dependency.constructor);
 
         if (override) {
           Object.assign(this, {
-            [key]: initializeDependency(override, dependenciesOverrides),
+            [key]: initializeDependency(this, override, dependency.args ?? [], dependenciesOverrides),
           });
         } else {
-          const defaultInstance = defaultDependencies.get(defaultDependency);
+          const defaultInstance = defaultDependencies.get(dependency.constructor);
 
           if (defaultInstance) {
             Object.assign(this, {
-              [key]: initializeDependency(defaultInstance, dependenciesOverrides),
+              [key]: initializeDependency(this, defaultInstance, dependency.args ?? [], dependenciesOverrides),
             });
           } else {
             Object.assign(this, {
-              [key]: initializeDependency(defaultDependency, dependenciesOverrides),
+              [key]: initializeDependency(
+                this,
+                dependency.constructor,
+                dependency.args ?? [],
+                dependenciesOverrides,
+                dependency.initiator,
+              ),
+            });
+          }
+        }
+      }
+    }
+
+    return this;
+  }
+
+  private __initializeDependenciesAfter() {
+    const proto = this.__reflectProto?.() ?? Object.getPrototypeOf(this);
+
+    const dependenciesOverrides = this.__dependenciesOverrides?.() ?? new Map();
+
+    const keys = Reflect.getMetadata(ServiceMetadata.Keys, proto);
+
+    if (keys) {
+      for (const key of keys) {
+        const dependency: Dependency<Constructor> = Reflect.getMetadata(
+          ServiceMetadata.InjectAfter,
+          proto,
+          key,
+        );
+
+        if (!dependency) continue;
+
+        const override = dependenciesOverrides.get(dependency.constructor);
+
+        if (override) {
+          Object.assign(this, {
+            [key]: initializeDependency(this, override, dependency.args ?? [], dependenciesOverrides),
+          });
+        } else {
+          const defaultInstance = defaultDependencies.get(dependency.constructor);
+
+          if (defaultInstance) {
+            Object.assign(this, {
+              [key]: initializeDependency(this, defaultInstance, dependency.args ?? [], dependenciesOverrides),
+            });
+          } else {
+            Object.assign(this, {
+              [key]: initializeDependency(
+                this,
+                dependency.constructor,
+                dependency.args ?? [],
+                dependenciesOverrides,
+                dependency.initiator,
+              ),
             });
           }
         }
@@ -138,19 +209,25 @@ export class Service {
    */
   protected spawnService<S extends typeof Service>(
     service: S,
-    ...overrides: Dependencies
+    initProps?: {
+      args?: ConstructorArgs<S>;
+      overrides?: Dependencies;
+    },
   ): InstanceType<S> {
-    const dependenciesOverrides = this.__dependenciesOverrides?.() ?? new Map();
+    let dependenciesOverrides = this.__dependenciesOverrides?.() ?? new Map();
 
-    for (const [dependency, override] of overrides) {
-      dependenciesOverrides.set(dependency, override);
+    if (initProps?.overrides) {
+      dependenciesOverrides = new Map(dependenciesOverrides);
+      for (const [dependency, override] of initProps?.overrides ?? []) {
+        dependenciesOverrides.set(dependency, override);
+      }
     }
 
     const override = dependenciesOverrides.get(service);
     if (override) {
-      return initializeDependency(override, dependenciesOverrides);
+      return initializeDependency(this, override, initProps?.args ?? [], dependenciesOverrides);
     }
 
-    return service.__init_service(dependenciesOverrides);
+    return service.__init_service(initProps?.args ?? [] as ConstructorArgs<S>, dependenciesOverrides);
   }
 }
