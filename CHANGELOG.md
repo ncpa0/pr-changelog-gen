@@ -1,3 +1,15 @@
+## 2.0.0 (July 30, 2026)
+
+### Breaking Changes
+
+- #### chore: moved to the latest clify.js - ([#97](https://github.com/ncpa0/pr-changelog-gen/pull/97))
+
+  - updated to clify.js from npm registry instead of GitHub
+  - added support for service argumen, which was necessary for new clify version to work
+
+  as the new clify version does not support cli args like `-gl`, (single dash can only have a single letter)
+  two of the cli arguments have been changed, `-gl` is no `-g` and `-gm` is now `-m`.
+
 ## 1.1.4 (July 29, 2026)
 
 ### Bug Fixes
