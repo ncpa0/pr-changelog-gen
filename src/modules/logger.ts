@@ -4,7 +4,7 @@ import { Service } from "../utils/dependency-injector/service";
 import { ConfigFacade } from "./config";
 
 export class Logger extends Service {
-  @Inject(() => ConfigFacade)
+  @Inject(ConfigFacade)
   declare private config: ConfigFacade;
 
   private stdout = new Output((v) => process.stdout.write(v));

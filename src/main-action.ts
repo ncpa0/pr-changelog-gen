@@ -1,4 +1,5 @@
 import { Octokit } from "@octokit/rest";
+import { CommandInitPhase, OptConstructor, OptionType } from "clify.js";
 import { Type, validator } from "dilswer";
 import {
   ArgDateFormat,
@@ -27,79 +28,74 @@ import { Service } from "./utils/dependency-injector/service";
 
 export * from "./arguments";
 
+function initOpt<T extends OptionType, R extends boolean>(
+  Constructor: OptConstructor<T, R>,
+  service: MainAction,
+) {
+  return service.cmd.option(Constructor);
+}
+
 export class MainAction extends Service {
-  @Inject(() => ArgSloppy)
+  constructor(private isSpawnedFromCli: boolean, public cmd: CommandInitPhase) {
+    super();
+  }
+
+  @Inject(ArgSloppy, { init: initOpt, initAfterSuper: true })
   declare private sloppy: InstanceType<typeof ArgSloppy>;
 
-  @Inject(() => ArgTrace)
+  @Inject(ArgTrace, { init: initOpt, initAfterSuper: true })
   declare private trace: InstanceType<typeof ArgTrace>;
 
-  @Inject(() => ArgVersion)
+  @Inject(ArgVersion, { init: initOpt, initAfterSuper: true })
   declare private version: InstanceType<typeof ArgVersion>;
 
-  @Inject(() => ArgIncludePrDescription)
+  @Inject(ArgIncludePrDescription, { init: initOpt, initAfterSuper: true })
   declare private includePrDescription: InstanceType<typeof ArgIncludePrDescription>;
 
-  @Inject(() => ArgPrTitleMatcher)
+  @Inject(ArgPrTitleMatcher, { init: initOpt, initAfterSuper: true })
   declare private prTitleMatcher: InstanceType<typeof ArgPrTitleMatcher>;
 
-  @Inject(() => ArgDateFormat)
+  @Inject(ArgDateFormat, { init: initOpt, initAfterSuper: true })
   declare private dateFormat: InstanceType<typeof ArgDateFormat>;
 
-  @Inject(() => ArgValidLabels)
+  @Inject(ArgValidLabels, { init: initOpt, initAfterSuper: true })
   declare private validLabels: InstanceType<typeof ArgValidLabels>;
 
-  @Inject(() => ArgOutputFile)
+  @Inject(ArgOutputFile, { init: initOpt, initAfterSuper: true })
   declare private outputFile: InstanceType<typeof ArgOutputFile>;
 
-  @Inject(() => ArgOnlySince)
+  @Inject(ArgOnlySince, { init: initOpt, initAfterSuper: true })
   declare private onlySince: InstanceType<typeof ArgOnlySince>;
 
-  @Inject(() => ArgGroupByLabels)
+  @Inject(ArgGroupByLabels, { init: initOpt, initAfterSuper: true })
   declare private groupByLabels: InstanceType<typeof ArgGroupByLabels>;
 
-  @Inject(() => ArgGroupByMatchers)
+  @Inject(ArgGroupByMatchers, { init: initOpt, initAfterSuper: true })
   declare private groupByMatchers: InstanceType<typeof ArgGroupByMatchers>;
 
-  @Inject(() => ArgOutputToStdout)
+  @Inject(ArgOutputToStdout, { init: initOpt, initAfterSuper: true })
   declare private outputToStdout: InstanceType<typeof ArgOutputToStdout>;
 
-  @Inject(() => ArgNoOutput)
+  @Inject(ArgNoOutput, { init: initOpt, initAfterSuper: true })
   declare private noOutput: InstanceType<typeof ArgNoOutput>;
 
-  @Inject(() => ArgExcludePrs)
+  @Inject(ArgExcludePrs, { init: initOpt, initAfterSuper: true })
   declare private excludePrs: InstanceType<typeof ArgExcludePrs>;
 
-  @Inject(() => ArgExcludePattern)
+  @Inject(ArgExcludePattern, { init: initOpt, initAfterSuper: true })
   declare private excludePatterns: InstanceType<typeof ArgExcludePattern>;
 
-  @Inject(() => Octokit)
+  @Inject(Octokit)
   declare private githubClient: InstanceType<typeof Octokit>;
 
-  @Inject(() => ConfigLoader)
+  @Inject(ConfigLoader)
   declare private configLoader: ConfigLoader;
 
-  @Inject(() => EnvvarReader)
+  @Inject(EnvvarReader)
   declare private envvarReader: EnvvarReader;
 
-  @Inject(() => MainRunner)
+  @Inject(MainRunner)
   declare private runner: MainRunner;
-
-  private isSpawnedFromCli = false;
-
-  /**
-   * Set whether the action is spawned from the CLI or not. When this
-   * is set to true, program will be terminated if an error occurs.
-   *
-   * If you are using this action from a node script, avoid this function.
-   *
-   * @default false
-   * @internal
-   */
-  public setIsSpawnedFromCli(v: boolean) {
-    this.isSpawnedFromCli = v;
-    return this;
-  }
 
   public async run() {
     return this.runner.run(

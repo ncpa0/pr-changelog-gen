@@ -5,7 +5,7 @@ import { Service } from "../utils/dependency-injector/service";
 import type { Repo } from "../utils/repo";
 
 export class GitService extends Service {
-  @Inject(() => Git)
+  @Inject(Git)
   declare private git: Git;
 
   _isSameGitUrl(gitUrlA: string, gitUrlB: string) {

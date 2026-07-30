@@ -11,15 +11,12 @@ const repository = new Repo("foo", "bar");
 const factory = (deps: { getCurrentDate?: () => Date; config?: ConfigFacade }) => {
   const { getCurrentDate = () => new Date(), config = mockConfig() } = deps;
 
-  return ChangelogGeneratorService.init(
-    [
-      DateResolver,
-      {
-        getCurrentDate,
-      },
+  return ChangelogGeneratorService.new({
+    deps: [
+      [DateResolver, { getCurrentDate }],
+      [ConfigFacade, config],
     ],
-    [ConfigFacade, config],
-  );
+  });
 };
 
 describe("ChangelogGeneratorService", () => {

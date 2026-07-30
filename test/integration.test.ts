@@ -1,4 +1,5 @@
 import { Octokit } from "@octokit/rest";
+import { configure } from "clify.js";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi as jest } from "vitest";
 import {
   ArgDateFormat,
@@ -244,16 +245,28 @@ const factory = (
 
   const logger = new LoggerMock(params);
 
-  return MainAction.init(
-    [ConfigLoader, configLoaderMock],
-    [EnvvarReader, envvarReaderMock],
-    [DateResolver, DateResolverMock],
-    [Octokit, githubClient],
-    [Git, gitClient],
-    [Filesystem, filesystem],
-    [Logger, logger],
-    ...argDeps,
-  ).setIsSpawnedFromCli(true);
+  const program = configure((main) => {
+    main.main((cmd) => {
+      const main = MainAction.new(
+        {
+          args: [true, cmd],
+          deps: [
+            [ConfigLoader, configLoaderMock],
+            [EnvvarReader, envvarReaderMock],
+            [DateResolver, DateResolverMock],
+            [Octokit, githubClient],
+            [Git, gitClient],
+            [Filesystem, filesystem],
+            [Logger, logger],
+            ...argDeps,
+          ],
+        },
+      );
+      return () => main.run();
+    });
+  });
+
+  return program;
 };
 
 const programExitSpy = jest.spyOn(process, "exit");
@@ -289,7 +302,7 @@ describe("integration", () => {
       logError: onPrintError,
     });
 
-    await expect(action.run()).resolves.toEqual(expect.any(String));
+    await action.run();
 
     expect(onPrintError).not.toHaveBeenCalled();
     expect(programExitSpy).not.toHaveBeenCalled();
@@ -348,7 +361,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -394,7 +407,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -415,7 +428,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -438,7 +451,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -495,7 +508,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -536,7 +549,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -597,7 +610,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -646,7 +659,7 @@ describe("integration", () => {
             logError: onPrintError,
           });
 
-          await expect(action.run()).resolves.toEqual(undefined);
+          await action.run();
 
           expect(onPrintError).toHaveBeenCalled();
           expect(programExitSpy).toHaveBeenCalled();
@@ -671,7 +684,7 @@ describe("integration", () => {
             logError: onPrintError,
           });
 
-          await expect(action.run()).resolves.toEqual(undefined);
+          await action.run();
 
           expect(onPrintError).toHaveBeenCalled();
           expect(programExitSpy).toHaveBeenCalled();
@@ -696,7 +709,7 @@ describe("integration", () => {
             logError: onPrintError,
           });
 
-          await expect(action.run()).resolves.toEqual(undefined);
+          await action.run();
 
           expect(onPrintError).toHaveBeenCalled();
           expect(programExitSpy).toHaveBeenCalled();
@@ -724,7 +737,7 @@ describe("integration", () => {
             logError: onPrintError,
           });
 
-          await expect(action.run()).resolves.toEqual(undefined);
+          await action.run();
 
           expect(onPrintError).toHaveBeenCalled();
           expect(programExitSpy).toHaveBeenCalled();
@@ -752,7 +765,7 @@ describe("integration", () => {
             logError: onPrintError,
           });
 
-          await expect(action.run()).resolves.toEqual(expect.any(String));
+          await action.run();
 
           expect(onPrintError).not.toHaveBeenCalled();
           expect(programExitSpy).not.toHaveBeenCalled();
@@ -775,7 +788,7 @@ describe("integration", () => {
             logError: onPrintError,
           });
 
-          await expect(action.run()).resolves.toEqual(expect.any(String));
+          await action.run();
 
           expect(onPrintError).not.toHaveBeenCalled();
           expect(programExitSpy).not.toHaveBeenCalled();
@@ -798,7 +811,7 @@ describe("integration", () => {
             logError: onPrintError,
           });
 
-          await expect(action.run()).resolves.toEqual(expect.any(String));
+          await action.run();
 
           expect(onPrintError).not.toHaveBeenCalled();
           expect(programExitSpy).not.toHaveBeenCalled();
@@ -822,7 +835,7 @@ describe("integration", () => {
             logError: onPrintError,
           });
 
-          await expect(action.run()).resolves.toEqual(expect.any(String));
+          await action.run();
 
           expect(onPrintError).not.toHaveBeenCalled();
           expect(programExitSpy).not.toHaveBeenCalled();
@@ -845,7 +858,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(undefined);
+        await action.run();
 
         expect(onPrintError).toHaveBeenCalled();
         expect(programExitSpy).toHaveBeenCalled();
@@ -870,7 +883,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -933,7 +946,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -1017,7 +1030,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -1075,7 +1088,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -1135,7 +1148,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -1194,7 +1207,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -1251,7 +1264,7 @@ describe("integration", () => {
           logWrite: onWrite,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -1279,7 +1292,7 @@ describe("integration", () => {
           logWrite: onWrite,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -1301,7 +1314,7 @@ describe("integration", () => {
           logWrite: onWrite,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -1322,7 +1335,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -1369,7 +1382,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();
@@ -1419,7 +1432,7 @@ describe("integration", () => {
           logError: onPrintError,
         });
 
-        await expect(action.run()).resolves.toEqual(expect.any(String));
+        await action.run();
 
         expect(onPrintError).not.toHaveBeenCalled();
         expect(programExitSpy).not.toHaveBeenCalled();

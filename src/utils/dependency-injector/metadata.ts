@@ -1,4 +1,5 @@
 export enum ServiceMetadata {
   Keys = "dependency:keys",
-  Inject = "dependency:inject",
+  InjectBefore = "dependency:inject:before",
+  InjectAfter = "dependency:inject:after",
 }

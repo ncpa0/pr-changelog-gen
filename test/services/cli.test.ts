@@ -35,13 +35,17 @@ function createCli(params: Partial<CliFactoryParams> = {}) {
 
   const loggerMock = new LoggerMock(params);
 
-  return CliService.init(
-    [ConfigFacade, params.config],
-    [ChangelogGeneratorService, { create: params.createChangelog }],
-    [PullRequestResolverService, { getMerged: params.getMergedPullRequests }],
-    [Filesystem, { prepend: params.prependFile }],
-    [GitService, { ensureCleanLocalGitState: params.ensureCleanLocalGitState }],
-    [Logger, loggerMock],
+  return CliService.new(
+    {
+      deps: [
+        [ConfigFacade, params.config],
+        [ChangelogGeneratorService, { create: params.createChangelog }],
+        [PullRequestResolverService, { getMerged: params.getMergedPullRequests }],
+        [Filesystem, { prepend: params.prependFile }],
+        [GitService, { ensureCleanLocalGitState: params.ensureCleanLocalGitState }],
+        [Logger, loggerMock],
+      ],
+    },
   );
 }
 

@@ -1,4 +1,4 @@
-import type { Argument } from "clify";
+import type { Option } from "clify.js";
 import "reflect-metadata";
 import {
   ArgDateFormat,
@@ -84,7 +84,7 @@ type TypeNameToType<T extends TypeName> = {
 }[T];
 
 type ArgKey = (typeof ARGS)[number][0];
-type ArgType<A extends ArgKey> = ArgForKey<A> extends new() => Argument<infer U, any>
+type ArgType<A extends ArgKey> = ArgForKey<A> extends new() => Option<infer U, any>
   ? U extends TypeName ? TypeNameToType<U>
   : never
   : never;

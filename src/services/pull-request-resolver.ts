@@ -22,13 +22,13 @@ export type PullResponse = {
 };
 
 export class PullRequestResolverService extends Service {
-  @Inject(() => Git)
+  @Inject(Git)
   declare private git: Git;
 
-  @Inject(() => Octokit)
+  @Inject(Octokit)
   declare private githubClient: Octokit;
 
-  @Inject(() => ConfigFacade)
+  @Inject(ConfigFacade)
   declare private config: ConfigFacade;
 
   _parseTagDateTime(gitTagInfo: string, tagName: string) {

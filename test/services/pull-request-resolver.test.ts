@@ -38,11 +38,13 @@ function factory(
     });
   }
 
-  return PullRequestResolverService.init(
-    [Git, { run: git }],
-    [Octokit, githubClient],
-    [ConfigFacade, config],
-  );
+  return PullRequestResolverService.new({
+    deps: [
+      [Git, { run: git }],
+      [Octokit, githubClient],
+      [ConfigFacade, config],
+    ],
+  });
 }
 
 describe("PullRequestResolverService", () => {

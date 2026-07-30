@@ -34,13 +34,13 @@ function createGitServiceWithDefaultRemoteAlias(
     throw new Error("Unexpected git command");
   });
 
-  return GS.init([Git, { run: git }]);
+  return GS.new({ deps: [[Git, { run: git }]] });
 }
 
 function createGitService(result = "") {
   const git = jest.fn(async () => result);
 
-  return GitService.init([Git, { run: git }]);
+  return GitService.new({ deps: [[Git, { run: git }]] });
 }
 
 describe("GitService", () => {

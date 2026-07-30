@@ -1,10 +1,15 @@
-import { configure } from "clify";
+import { configure } from "clify.js";
 import "reflect-metadata";
 import { MainAction } from "./main-action";
 
-configure((main) => {
-  main.setDisplayName("pr-changelog-gen");
+const program = configure((main) => {
+  main.setName("pr-changelog-gen");
   main.setDescription("Generate a changelog from merged pull requests.");
 
-  main.setMainAction(() => new MainAction().setIsSpawnedFromCli(true));
+  main.main((cmd) => {
+    const main = MainAction.new({ args: [true, cmd] });
+    return () => main.run();
+  });
 });
+
+program.run();

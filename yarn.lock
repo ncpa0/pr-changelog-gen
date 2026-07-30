@@ -355,9 +355,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ncpa0cpl/nodepack@npm:^2.4.1":
-  version: 2.4.1
-  resolution: "@ncpa0cpl/nodepack@npm:2.4.1"
+"@ncpa0cpl/nodepack@npm:^2.4.2":
+  version: 2.4.2
+  resolution: "@ncpa0cpl/nodepack@npm:2.4.2"
   dependencies:
     "@ncpa0cpl/node-worker-bridge": ^0.0.4
     "@ts-morph/bootstrap": ^0.29.0
@@ -373,7 +373,7 @@ __metadata:
   dependenciesMeta:
     json-to-ts:
       optional: true
-  checksum: ec809b98ba61eaa0785c6beec7cc6c6f93ec382d92d0b7dc711c86069d8fa3a82b19f76d63539d3662dea234767351fa7f269ddf78d5bf50ea1ff87ea3bcfde7
+  checksum: d49c9d920cfb1c81a2aabf14264b82573551596dd1fde92c19e472e8f11fe9cc501a91d95a0e312002f94ef38526f6c49f278f3db7edb898abce297d18199489
   languageName: node
   linkType: hard
 
@@ -1291,7 +1291,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.0.0, chalk@npm:^4.1.2":
+"chalk@npm:^4.0.0":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
   dependencies:
@@ -1336,12 +1336,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clify@ncpa0cpl/clify.js#0.0.4":
-  version: 1.0.3
-  resolution: "clify@https://github.com/ncpa0cpl/clify.js.git#commit=fe91dede1322b302fbc7ca8f5695ce37ccfb8bf4"
+"clify.js@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "clify.js@npm:1.0.2"
   dependencies:
-    chalk: ^4.1.2
-  checksum: 5010804a97ef9bdad62bf89d743ffd4b599326c060bce0f061f1b9a50c18e73fd25fe65c9ca808818bd8823df12708cb78d1149dc1fe328ea3b5dc6cebed7da2
+    minimist: ^1.2.8
+  checksum: 0109af2a949e746365e173ae97888aab74e7b8cc443b7c9611f1e49eb3724b3a0185c5f82355d2001348ce276c15bc6817bea8fb8d1007055da73aa374f318bc
   languageName: node
   linkType: hard
 
@@ -2925,14 +2925,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "pr-changelog-gen@workspace:."
   dependencies:
-    "@ncpa0cpl/nodepack": ^2.4.1
+    "@ncpa0cpl/nodepack": ^2.4.2
     "@octokit/rest": ^22.0.1
     "@types/git-url-parse": ^16.0.2
     "@types/node": ^26.1.2
     "@types/parse-github-repo-url": ^1.4.2
     "@types/semver": ^7.7.1
     axios: ^1.18.1
-    clify: "ncpa0cpl/clify.js#0.0.4"
+    clify.js: ^1.0.2
     date-fns: ^4.4.0
     dilswer: ^3.2.1
     dprint: ^0.55.2
